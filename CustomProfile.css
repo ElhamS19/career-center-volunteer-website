@@ -1,0 +1,130 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #0b3d2e;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #eee;
+    padding: 15px 30px;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.navbar nav a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: black;
+}
+
+.icons span {
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+/* Container */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 85vh;
+}
+
+/* Profile Card */
+.profile-card {
+    background: #ddd;
+    padding: 40px;
+    border-radius: 30px;
+    width: 600px;
+}
+
+/* Header */
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    background: gray;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+/* Editable Name */
+.name-input {
+    font-size: 26px;
+    font-weight: bold;
+    border: none;
+    background: #bbb;
+    padding: 8px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* Form */
+.form-group {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+}
+
+.form-group label {
+    width: 120px;
+    font-weight: bold;
+}
+
+.form-group input {
+    flex: 1;
+    padding: 8px;
+    background: #bbb;
+    border: none;
+    border-radius: 3px;
+}
+
+/* Buttons */
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.save-btn {
+    background-color: #4e7d6b;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.logout-btn {
+    background-color: #b44b4b;
+    color: black;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* Notification Popup */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #eee;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-weight: bold;
+    display: none;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+}

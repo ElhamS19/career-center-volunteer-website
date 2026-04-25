@@ -1,0 +1,35 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #0b3d2e;
+    color: white;
+}
+
+.navbar {
+    background: #eee;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.center-box {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-box h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.center-box button {
+    background-color: #ffc107;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
