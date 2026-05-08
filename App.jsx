@@ -1,30 +1,52 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ProfilePage from './components/ProfilePage';
-import SaveSuccessPage from './components/SaveSuccessPage';
-import LogoutSuccessPage from './components/LogoutSuccessPage';
-import './App.css';
+import { useState } from "react";
+import styles from "./styles.js";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import SignUpPage from "./pages/SignUpPage";
+import ProfilePage from "./pages/ProfilePage";
+import SaveSuccessPage from "./pages/SaveSuccessPage";
+import LogoutSuccessPage from "./pages/LogoutSuccessPage";
 
-function App() {
+export default function App() {
+  const [currentPage, setCurrentPage] = useState("home");
+
   return (
+    <div style={styles.body}>
+      {/* Watermark background inherited from team styles */}
+      <div style={styles.watermark}></div>
 
-    <Router>
-      <div className="App">
-        {}
-        <Routes>
-          {}
-          {/* The main profile page is shown on the default path '/' */}
-          <Route path="/" element={<ProfilePage />} />
+      {currentPage === "home" && (
+        <Home onLoginClick={() => setCurrentPage("login")} />
+      )}
+      {currentPage === "login" && (
+        <Login
+          onHomeClick={() => setCurrentPage("home")}
+          onSignUpClick={() => setCurrentPage("signup")}
+          // Assuming successful login takes them to their profile
+          onLoginSuccess={() => setCurrentPage("profile")} 
+        />
+      )}
+      {currentPage === "signup" && (
+        <SignUpPage
+          onHomeClick={() => setCurrentPage("home")}
+          onLoginClick={() => setCurrentPage("login")}
+        />
+      )}
 
-          {/* When the path changes to '/saved-successfully', the corresponding page is shown */}
-          <Route path="/saved-successfully" element={<SaveSuccessPage />} />
-
-          {/* When the path changes to '/logged-out-successfully', the logout success page is shown */}
-          <Route path="/logged-out-successfully" element={<LogoutSuccessPage />} />
-        </Routes>
-      </div>
-    </Router>
+      {/* --- Your Pages Integrated Here --- */}
+      {currentPage === "profile" && (
+        <ProfilePage 
+          onSave={() => setCurrentPage("saved")} 
+          onLogoutClick={() => setCurrentPage("logout")} 
+          onHomeClick={() => setCurrentPage("home")}
+        />
+      )}
+      {currentPage === "saved" && (
+        <SaveSuccessPage onHomeClick={() => setCurrentPage("home")} />
+      )}
+      {currentPage === "logout" && (
+        <LogoutSuccessPage onLoginClick={() => setCurrentPage("login")} />
+      )}
+    </div>
   );
 }
-
-export default App;
