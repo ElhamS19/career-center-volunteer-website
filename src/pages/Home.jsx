@@ -4,9 +4,9 @@ import Icon from "../components/Icon";
 import styles from "../styles";
 
 const events = [
-  { month: "Apr", day: "22", title: "Employer on Campus", time: "10:00 am – 1:00 pm", location: "Library Quad" },
-  { month: "Apr", day: "22", title: "Here to Career",     time: "2:00 pm – 3:30 pm",  location: "Career Center" },
-  { month: "May", day: "06", title: "Employer on Campus", time: "10:00 am – 2:00 pm", location: "University Union" },
+  { month: "Apr", day: "22", title: "Employer on Campus", time: "10:00 am - 1:00 pm", location: "Library Quad" },
+  { month: "Apr", day: "22", title: "Here to Career",     time: "2:00 pm - 3:30 pm",  location: "Career Center" },
+  { month: "May", day: "06", title: "Employer on Campus", time: "10:00 am - 2:00 pm", location: "University Union" },
 ];
 
 export default function Home({ onHomeClick, onLoginClick, onSignupClick, userAvatar, onAvatarClick }) {

@@ -67,15 +67,13 @@ export default function App() {
           onAvatarClick={handleAvatarClick}
         />
       )}
-
       {currentPage === "profile" && (
-        <ProfilePage 
-          onSave={() => setCurrentPage("saveSuccess")} 
+        <ProfilePage
+          onSave={() => setCurrentPage("saveSuccess")}
           onLogoutClick={handleLogout}
           onHomeClick={() => setCurrentPage("home")}
         />
       )}
-
       {currentPage === "saveSuccess" && (
         <SaveSuccessPage
           onHomeClick={() => setCurrentPage("home")}
@@ -83,13 +81,10 @@ export default function App() {
           onAvatarClick={handleAvatarClick}
         />
       )}
-
       {currentPage === "logoutSuccess" && (
-        <LogoutSuccessPage 
-          onLoginClick={() => setCurrentPage("login")} 
+        <LogoutSuccessPage
+          onLoginClick={() => setCurrentPage("login")}
           onHomeClick={() => setCurrentPage("home")}
-          userAvatar={userAvatar}
-          onAvatarClick={handleAvatarClick}
         />
       )}
     </div>

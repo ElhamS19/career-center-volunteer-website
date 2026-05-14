@@ -5,9 +5,11 @@ const colors = {
   goldDark: "#6B5F00",
   goldBg: "rgba(196, 176, 0, 0.15)",
 
-  bg: "#FAFAF7",
-  surface: "#FFFFFF",
+  bg: "#043927",          // page background — Sac State green
+  surface: "#FFFFFF",     // cards, navbar
   surfaceMuted: "#F4F3EE",
+  onGreen: "#FFFFFF",            // text on green background
+  onGreenMuted: "rgba(255,255,255,0.78)",
 
   textPrimary: "#1A1A1A",
   textSecondary: "#6B6B6B",
@@ -123,9 +125,10 @@ const styles = {
   },
 
   hero: {
-    padding: "44px 28px 36px",
+    padding: "36px 32px",
     backgroundColor: colors.surface,
-    borderBottom: `1px solid ${colors.border}`,
+    borderRadius: radius.lg,
+    margin: "24px 28px 0",
   },
   pill: {
     display: "inline-block",
@@ -221,11 +224,11 @@ const styles = {
     fontSize: "16px",
     fontWeight: 500,
     margin: 0,
-    color: colors.textPrimary,
+    color: colors.onGreen,
   },
   sectionLink: {
     fontSize: "13px",
-    color: colors.textSecondary,
+    color: colors.onGreenMuted,
     cursor: "pointer",
     display: "inline-flex",
     alignItems: "center",
@@ -241,7 +244,6 @@ const styles = {
     display: "flex",
     gap: "16px",
     padding: "16px",
-    border: `1px solid ${colors.border}`,
     borderRadius: radius.md,
     alignItems: "center",
     backgroundColor: colors.surface,
@@ -313,7 +315,11 @@ const styles = {
   },
   authContainer: {
     width: "100%",
-    maxWidth: "380px",
+    maxWidth: "420px",
+    backgroundColor: colors.surface,
+    border: `1px solid ${colors.border}`,
+    borderRadius: radius.lg,
+    padding: "36px 32px",
   },
   authHeader: {
     textAlign: "center",
