@@ -2,10 +2,10 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import styles from "../styles";
 
-export default function Login({ onHomeClick, onSignUpClick }) {
+export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess }) {
   const [email, setEmail]           = useState("");
   const [password, setPassword]     = useState("");
-  const [remember, setRemember]     = useState(false);
+  const [remember, setRemember]     = useState(true);
   const [showPw, setShowPw]         = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [pwError, setPwError]       = useState(false);
@@ -18,18 +18,18 @@ export default function Login({ onHomeClick, onSignUpClick }) {
 
   function handleLogin() {
     let valid = true;
-
     if (!isValidEmail(email)) { setEmailError(true); valid = false; }
     if (password.length < 6)  { setPwError(true);    valid = false; }
     if (!valid) return;
 
     setLoading(true);
-    // TODO: replace with real 
     setTimeout(() => {
       setLoading(false);
       setSuccess(true);
-      // TODO: navigate to dashboard
-    }, 1500);
+      if (typeof onLoginSuccess === "function") {
+        setTimeout(onLoginSuccess, 400);
+      }
+    }, 1000);
   }
 
   function handleKeyDown(e) {
@@ -38,23 +38,18 @@ export default function Login({ onHomeClick, onSignUpClick }) {
 
   return (
     <div style={styles.page}>
-      <Navbar onLoginClick={() => {}} onHomeClick={onHomeClick} />
+      <Navbar onHomeClick={onHomeClick} />
 
-      <div style={styles.loginBody}>
-        <div style={styles.loginContainer}>
-
-          {/* Logo */}
-          <div style={styles.logoSection}>
-            <div style={styles.sacLogo}>
-              <span style={styles.sacLogoSpan}>S</span>
-            </div>
-            <h1 style={styles.logoH1}>Welcome Back!</h1>
-            <p style={styles.logoP}>Sign in to your Sac State account</p>
+      <div style={styles.authBody}>
+        <div style={styles.authContainer}>
+          <div style={styles.authHeader}>
+            <div style={styles.authLogo}>S</div>
+            <h1 style={styles.authTitle}>Welcome back</h1>
+            <p style={styles.authSubtitle}>Sign in with your Sac State account</p>
           </div>
 
-          {/* Email */}
           <div style={styles.formGroup}>
-            <label style={styles.label}>Email Address</label>
+            <label style={styles.label}>Email</label>
             <input
               type="email"
               placeholder="hornet@csus.edu"
@@ -66,20 +61,26 @@ export default function Login({ onHomeClick, onSignUpClick }) {
             {emailError && <p style={styles.errorText}>Please enter a valid email address.</p>}
           </div>
 
-          {/* Password */}
           <div style={styles.formGroup}>
-            <label style={styles.label}>Password</label>
-            <div style={styles.passwordWrapper}>
+            <div style={styles.labelRow}>
+              <label style={styles.label}>Password</label>
+              <span style={styles.forgotLink}>Forgot?</span>
+            </div>
+            <div style={styles.passwordWrap}>
               <input
                 type={showPw ? "text" : "password"}
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setPwError(false); }}
                 onKeyDown={handleKeyDown}
-                style={{ ...styles.input, paddingRight: "44px", ...(pwError ? styles.inputError : {}) }}
+                style={{
+                  ...styles.input,
+                  paddingRight: "56px",
+                  ...(pwError ? styles.inputError : {}),
+                }}
               />
               <button
-                style={styles.togglePassword}
+                style={styles.passwordToggle}
                 type="button"
                 onClick={() => setShowPw(!showPw)}
               >
@@ -89,51 +90,30 @@ export default function Login({ onHomeClick, onSignUpClick }) {
             {pwError && <p style={styles.errorText}>Password needs to be at least 6 characters.</p>}
           </div>
 
-          {/* Options row */}
-          <div style={styles.formOptions}>
-            <label style={styles.rememberMe}>
-              <input
-                type="checkbox"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-                style={{ width: "15px", height: "15px", accentColor: "#043927", cursor: "pointer" }}
-              />
-              Remember me
-            </label>
-            <span style={styles.forgotLink}>Forgot Password?</span>
-          </div>
+          <label style={styles.rememberRow}>
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              style={{ width: "15px", height: "15px", accentColor: "#043927", cursor: "pointer" }}
+            />
+            Keep me signed in
+          </label>
 
-          {/* Login button */}
           <button
-            style={{ ...styles.loginBtn, opacity: loading ? 0.7 : 1 }}
+            style={{ ...styles.primaryBtnFull, opacity: loading ? 0.7 : 1 }}
             type="button"
             onClick={handleLogin}
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Log In"}
+            {loading ? "Signing in..." : "Sign in"}
           </button>
 
-          {/* Success message */}
-          {success && <div style={styles.successMsg}>✅ Logged in successfully!</div>}
+          {success && <div style={styles.successBox}>Signed in successfully.</div>}
 
-          {/* Divider */}
-          <div style={styles.divider}>
-            <div style={styles.dividerLine}></div>
-            <span>or</span>
-            <div style={styles.dividerLine}></div>
-          </div>
-
-          {/* Sign up */}
-          <p style={styles.signupText}>
-            Don't have an account?{" "}
-            <span style={styles.signupLink} onClick={onSignUpClick}>Sign Up</span>
+          <p style={styles.authFooter}>
+            New here? <span style={styles.authLink} onClick={onSignUpClick}>Create an account</span>
           </p>
-
-          {/* Back to home */}
-          <p style={styles.backLink}>
-            ← <span style={styles.backLinkA} onClick={onHomeClick}>Back to Home</span>
-          </p>
-
         </div>
       </div>
     </div>

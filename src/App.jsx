@@ -24,11 +24,11 @@ export default function App() {
 
   return (
     <div style={styles.body}>
-      {/* Watermark background */}
-      <div style={styles.watermark}></div>
-
       {currentPage === "home" && (
-        <Home onLoginClick={() => setCurrentPage("login")} />
+        <Home
+          onLoginClick={() => setCurrentPage("login")}
+          onSignupClick={() => setCurrentPage("signup")}
+        />
       )}
       {currentPage === "login" && (
         <Login

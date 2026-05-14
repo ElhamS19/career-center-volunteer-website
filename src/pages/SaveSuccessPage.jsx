@@ -1,24 +1,23 @@
 import Navbar from "../components/Navbar";
+import Icon from "../components/Icon";
 import styles from "../styles";
 
 export default function SaveSuccessPage({ onHomeClick }) {
   return (
     <div style={styles.page}>
-      <Navbar onLoginClick={() => {}} onHomeClick={onHomeClick} />
-      <div style={styles.loginBody}>
-        <div style={{ ...styles.loginContainer, textAlign: "center", padding: "50px 30px" }}>
-          <div style={{ fontSize: "50px", marginBottom: "20px" }}>✅</div>
-          <h2 style={{ color: "#043927", fontSize: "22px", marginBottom: "15px" }}>
-            Changes Saved Successfully!
-          </h2>
-          <p style={{ color: "#666", marginBottom: "30px" }}>
-            Your profile information has been updated.
-          </p>
-          <button 
-            onClick={onHomeClick} 
-            style={{ ...styles.loginBtn, margin: "0 auto", width: "auto", padding: "12px 30px" }}
-          >
-            Return to Home Page
+      <Navbar onHomeClick={onHomeClick} avatarInitials="JH" />
+
+      <div style={styles.confirmContainer}>
+        <div style={styles.confirmIcon}>
+          <Icon name="check" size={26} strokeWidth={2.4} />
+        </div>
+        <h2 style={styles.confirmTitle}>Changes saved</h2>
+        <p style={styles.confirmText}>
+          Your profile information has been updated.
+        </p>
+        <div style={styles.confirmBtnRow}>
+          <button style={styles.primaryBtn} type="button" onClick={onHomeClick}>
+            Return home
           </button>
         </div>
       </div>

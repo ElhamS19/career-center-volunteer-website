@@ -1,58 +1,57 @@
 import Navbar from "../components/Navbar";
 import EventCard from "../components/EventCard";
+import Icon from "../components/Icon";
 import styles from "../styles";
 
 const events = [
-  { date: "April 22", title: "Employer on Campus", time: "10:00 am - 1:00 pm" },
-  { date: "April 22", title: "Here to Career",     time: "2:00 pm - 3:30 pm"  },
-  { date: "May 6",    title: "Employer on Campus", time: "10:00 am - 2:00 pm" },
+  { month: "Apr", day: "22", title: "Employer on Campus", time: "10:00 am – 1:00 pm", location: "Library Quad" },
+  { month: "Apr", day: "22", title: "Here to Career",     time: "2:00 pm – 3:30 pm",  location: "Career Center" },
+  { month: "May", day: "06", title: "Employer on Campus", time: "10:00 am – 2:00 pm", location: "University Union" },
 ];
 
-export default function Home({ onLoginClick }) {
+export default function Home({ onLoginClick, onSignupClick }) {
+  function scrollToEvents() {
+    const el = document.getElementById("upcoming-events");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <div style={styles.page}>
-      <Navbar onLoginClick={onLoginClick} onHomeClick={() => {}} />
+      <Navbar onHomeClick={() => {}} onLoginClick={onLoginClick} />
 
-      <div style={styles.main}>
-        {/* LEFT — upcoming events */}
-        <div style={styles.leftBoxes}>
-          <div style={styles.box}>
-            <div style={styles.boxTitle}>Upcoming Events</div>
-          </div>
-          {events.map((event, i) => (
-            <EventCard key={i} {...event} />
+      <section style={styles.hero}>
+        <span style={styles.pill}>Sacramento State</span>
+        <h1 style={styles.heroTitle}>
+          Find your next opportunity at the Career Center.
+        </h1>
+        <p style={styles.heroSub}>
+          One place for students, recruiters, and volunteers to connect through events,
+          workshops, and on-campus hiring.
+        </p>
+        <div style={styles.heroBtnRow}>
+          <button style={styles.primaryBtn} type="button" onClick={scrollToEvents}>
+            Browse events
+          </button>
+          <button style={styles.ghostBtn} type="button" onClick={onSignupClick}>
+            Sign up to volunteer
+          </button>
+        </div>
+      </section>
+
+      <section id="upcoming-events" style={styles.section}>
+        <div style={styles.sectionHeader}>
+          <h2 style={styles.sectionTitle}>Upcoming events</h2>
+          <span style={styles.sectionLink}>
+            View all <Icon name="arrowRight" size={13} />
+          </span>
+        </div>
+
+        <div style={styles.eventList}>
+          {events.map((e, i) => (
+            <EventCard key={i} {...e} onSignUp={onLoginClick} />
           ))}
         </div>
-
-        {/* TOP CENTER text */}
-        <div style={styles.topText}>
-          <div style={styles.welcome}>Welcome to CSUS CAREER CENTER</div>
-          <div style={styles.subtext}>One Platform. Students. Recruiters. Opportunities</div>
-        </div>
-
-        {/* CENTER title */}
-        <div style={styles.content}>
-          <div style={styles.centerContainer}>
-            <div style={styles.smallTitle}>Sacramento State</div>
-            <div style={styles.bigTitle}>Career</div>
-            <div style={styles.bigTitle}>Center</div>
-          </div>
-        </div>
-
-        {/* RIGHT images */}
-        <div style={styles.rightImage}>
-          <img
-            src="https://www.csus.edu/college/business-administration/graduate/_internal/_images/49618278783_86d918dc72_b.jpg"
-            alt="Career Center"
-            style={styles.img}
-          />
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTsHRceEpd4ivvAeOIH-Nr9ghe4q0zLPJ3kA&s"
-            alt="Students"
-            style={styles.img}
-          />
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
