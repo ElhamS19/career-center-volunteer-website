@@ -3,6 +3,9 @@ import styles from "./styles";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUpPage from "./pages/SignUpPage";
+import ProfilePage from "./pages/ProfilePage";
+import SaveSuccessPage from "./pages/SaveSuccessPage";
+import LogoutSuccessPage from "./pages/LogoutSuccessPage";
 
 /* key frame for fade in animation */
 const styleTag = document.createElement("style");
@@ -31,6 +34,8 @@ export default function App() {
         <Login
           onHomeClick={() => setCurrentPage("home")}
           onSignUpClick={() => setCurrentPage("signup")}
+          // Assuming successful login takes them to their profile
+          onLoginSuccess={() => setCurrentPage("profile")} 
         />
       )}
       {currentPage === "signup" && (
@@ -39,6 +44,25 @@ export default function App() {
           onLoginClick={() => setCurrentPage("login")}
         />
       )}
+
+      {currentPage === "profile" && (
+  <ProfilePage 
+    onSave={() => setCurrentPage("saveSuccess")} 
+    onLogoutClick={() => setCurrentPage("logoutSuccess")}
+    onHomeClick={() => setCurrentPage("home")}
+  />
+)}
+
+{currentPage === "saveSuccess" && (
+  <SaveSuccessPage onHomeClick={() => setCurrentPage("home")} />
+)}
+
+{currentPage === "logoutSuccess" && (
+  <LogoutSuccessPage 
+    onLoginClick={() => setCurrentPage("login")} 
+    onHomeClick={() => setCurrentPage("home")}
+  />
+)}
     </div>
   );
 }

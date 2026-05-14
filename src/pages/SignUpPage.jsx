@@ -20,7 +20,7 @@ function getStrength(pw) {
   ];
   return { score, ...map[score] };
 }
- /* Sign Up page component */
+ 
 export default function SignUpPage({ onHomeClick, onLoginClick }) {
   const [name,        setName]        = useState("");
   const [email,       setEmail]       = useState("");
@@ -42,7 +42,7 @@ export default function SignUpPage({ onHomeClick, onLoginClick }) {
   function isValidEmail(val) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
   }
- /* main form submission handler */
+ 
   function handleSubmit() {
     let valid = true;
  
@@ -75,7 +75,7 @@ export default function SignUpPage({ onHomeClick, onLoginClick }) {
       setSuccess(true);
     }, 1500);
   }
- /* allow pressing Enter to submit the form */
+ 
   function handleKeyDown(e) {
     if (e.key === "Enter") handleSubmit();
   }
