@@ -4,10 +4,11 @@ import styles from "../styles";
 export default function Navbar({
   onHomeClick,
   onLoginClick,
-  avatarInitials,
+  userAvatar,
+  onAvatarClick,
 }) {
-  const showSignIn = !avatarInitials && typeof onLoginClick === "function";
-  const isLoggedIn = Boolean(avatarInitials);
+  const showSignIn = !userAvatar && typeof onLoginClick === "function";
+  const isLoggedIn = Boolean(userAvatar);
 
   return (
     <header style={styles.navbar}>
@@ -35,8 +36,19 @@ export default function Navbar({
         )}
 
         {isLoggedIn && (
-          <div style={styles.avatarSmall} aria-label="Your profile">
-            {avatarInitials}
+          <div
+            style={{ ...styles.avatarSmall, cursor: "pointer" }}
+            aria-label="Your profile"
+            role="button"
+            tabIndex={0}
+            onClick={onAvatarClick}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                onAvatarClick?.();
+              }
+            }}
+          >
+            {userAvatar}
           </div>
         )}
 

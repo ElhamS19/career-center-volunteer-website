@@ -2,10 +2,10 @@ import Navbar from "../components/Navbar";
 import Icon from "../components/Icon";
 import styles from "../styles";
 
-export default function SaveSuccessPage({ onHomeClick }) {
+export default function SaveSuccessPage({ onHomeClick, userAvatar, onAvatarClick }) {
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} avatarInitials="JH" />
+      <Navbar onHomeClick={onHomeClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <div style={styles.confirmContainer}>
         <div style={styles.confirmIcon}>

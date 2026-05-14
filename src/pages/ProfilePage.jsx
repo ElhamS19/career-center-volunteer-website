@@ -28,7 +28,7 @@ export default function ProfilePage({ onSave, onLogoutClick, onHomeClick }) {
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} avatarInitials={initials} />
+      <Navbar onHomeClick={onHomeClick} userAvatar={initials} />
 
       <div style={styles.profileBody}>
         <div style={styles.profileContainer}>

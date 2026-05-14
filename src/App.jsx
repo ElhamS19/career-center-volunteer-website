@@ -21,48 +21,77 @@ document.head.appendChild(styleTag);
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
+  const [userAvatar, setUserAvatar] = useState("");
+
+  function handleLoginSuccess() {
+    setUserAvatar("JH");
+    setCurrentPage("profile");
+  }
+
+  function handleAvatarClick() {
+    if (userAvatar) {
+      setCurrentPage("profile");
+    }
+  }
+
+  function handleLogout() {
+    setUserAvatar("");
+    setCurrentPage("logoutSuccess");
+  }
 
   return (
     <div style={styles.body}>
       {currentPage === "home" && (
         <Home
+          onHomeClick={() => setCurrentPage("home")}
           onLoginClick={() => setCurrentPage("login")}
           onSignupClick={() => setCurrentPage("signup")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
         />
       )}
       {currentPage === "login" && (
         <Login
           onHomeClick={() => setCurrentPage("home")}
           onSignUpClick={() => setCurrentPage("signup")}
-          // Assuming successful login takes them to their profile
-          onLoginSuccess={() => setCurrentPage("profile")} 
+          onLoginSuccess={handleLoginSuccess}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
         />
       )}
       {currentPage === "signup" && (
         <SignUpPage
           onHomeClick={() => setCurrentPage("home")}
           onLoginClick={() => setCurrentPage("login")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
         />
       )}
 
       {currentPage === "profile" && (
-  <ProfilePage 
-    onSave={() => setCurrentPage("saveSuccess")} 
-    onLogoutClick={() => setCurrentPage("logoutSuccess")}
-    onHomeClick={() => setCurrentPage("home")}
-  />
-)}
+        <ProfilePage 
+          onSave={() => setCurrentPage("saveSuccess")} 
+          onLogoutClick={handleLogout}
+          onHomeClick={() => setCurrentPage("home")}
+        />
+      )}
 
-{currentPage === "saveSuccess" && (
-  <SaveSuccessPage onHomeClick={() => setCurrentPage("home")} />
-)}
+      {currentPage === "saveSuccess" && (
+        <SaveSuccessPage
+          onHomeClick={() => setCurrentPage("home")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
+        />
+      )}
 
-{currentPage === "logoutSuccess" && (
-  <LogoutSuccessPage 
-    onLoginClick={() => setCurrentPage("login")} 
-    onHomeClick={() => setCurrentPage("home")}
-  />
-)}
+      {currentPage === "logoutSuccess" && (
+        <LogoutSuccessPage 
+          onLoginClick={() => setCurrentPage("login")} 
+          onHomeClick={() => setCurrentPage("home")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
+        />
+      )}
     </div>
   );
 }

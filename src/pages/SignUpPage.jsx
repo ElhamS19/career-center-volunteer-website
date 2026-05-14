@@ -20,7 +20,7 @@ function getStrength(pw) {
   return { score, ...map[score] };
 }
 
-export default function SignUpPage({ onHomeClick, onLoginClick }) {
+export default function SignUpPage({ onHomeClick, onLoginClick, userAvatar, onAvatarClick }) {
   const [name,        setName]        = useState("");
   const [email,       setEmail]       = useState("");
   const [password,    setPassword]    = useState("");
@@ -80,7 +80,7 @@ export default function SignUpPage({ onHomeClick, onLoginClick }) {
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} />
+      <Navbar onHomeClick={onHomeClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <div style={styles.authBody}>
         <div style={styles.authContainer}>

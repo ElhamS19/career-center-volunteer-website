@@ -9,7 +9,7 @@ const events = [
   { month: "May", day: "06", title: "Employer on Campus", time: "10:00 am – 2:00 pm", location: "University Union" },
 ];
 
-export default function Home({ onLoginClick, onSignupClick }) {
+export default function Home({ onHomeClick, onLoginClick, onSignupClick, userAvatar, onAvatarClick }) {
   function scrollToEvents() {
     const el = document.getElementById("upcoming-events");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -17,7 +17,7 @@ export default function Home({ onLoginClick, onSignupClick }) {
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={() => {}} onLoginClick={onLoginClick} />
+      <Navbar onHomeClick={onHomeClick} onLoginClick={onLoginClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <section style={styles.hero}>
         <span style={styles.pill}>Sacramento State</span>

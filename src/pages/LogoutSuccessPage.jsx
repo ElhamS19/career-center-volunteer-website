@@ -2,10 +2,10 @@ import Navbar from "../components/Navbar";
 import Icon from "../components/Icon";
 import styles from "../styles";
 
-export default function LogoutSuccessPage({ onLoginClick, onHomeClick }) {
+export default function LogoutSuccessPage({ onLoginClick, onHomeClick, userAvatar, onAvatarClick }) {
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} onLoginClick={onLoginClick} />
+      <Navbar onHomeClick={onHomeClick} onLoginClick={onLoginClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <div style={styles.confirmContainer}>
         <div
