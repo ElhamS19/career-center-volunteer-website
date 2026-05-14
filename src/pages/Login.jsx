@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import styles from "../styles";
-
+ 
 export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, userAvatar, onAvatarClick }) {
   const [email, setEmail]           = useState("");
   const [password, setPassword]     = useState("");
@@ -9,37 +9,60 @@ export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, user
   const [showPw, setShowPw]         = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [pwError, setPwError]       = useState(false);
+  const [serverError, setServerError] = useState("");
   const [loading, setLoading]       = useState(false);
   const [success, setSuccess]       = useState(false);
-
+ 
   function isValidEmail(val) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
   }
-
-  function handleLogin() {
+ 
+  async function handleLogin() {
     let valid = true;
+    setServerError("");
+ 
     if (!isValidEmail(email)) { setEmailError(true); valid = false; }
     if (password.length < 6)  { setPwError(true);    valid = false; }
     if (!valid) return;
-
+ 
     setLoading(true);
-    setTimeout(() => {
+ 
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+ 
+      const data = await response.json();
+ 
+      if (!response.ok) {
+        setServerError(data.error);
+        setLoading(false);
+        return;
+      }
+ 
       setLoading(false);
       setSuccess(true);
+ 
       if (typeof onLoginSuccess === "function") {
-        setTimeout(onLoginSuccess, 400);
+        setTimeout(() => onLoginSuccess(data.user), 400);
       }
-    }, 1000);
+ 
+    } catch (err) {
+      setLoading(false);
+      setServerError("Could not connect to server. Make sure it is running.");
+    }
   }
-
+ 
   function handleKeyDown(e) {
     if (e.key === "Enter") handleLogin();
   }
-
+ 
   return (
     <div style={styles.page}>
       <Navbar onHomeClick={onHomeClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
-
+ 
       <div style={styles.authBody}>
         <div style={styles.authContainer}>
           <div style={styles.authHeader}>
@@ -47,7 +70,7 @@ export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, user
             <h1 style={styles.authTitle}>Welcome back</h1>
             <p style={styles.authSubtitle}>Sign in with your Sac State account</p>
           </div>
-
+ 
           <div style={styles.formGroup}>
             <label style={styles.label}>Email</label>
             <input
@@ -60,7 +83,7 @@ export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, user
             />
             {emailError && <p style={styles.errorText}>Please enter a valid email address.</p>}
           </div>
-
+ 
           <div style={styles.formGroup}>
             <div style={styles.labelRow}>
               <label style={styles.label}>Password</label>
@@ -89,7 +112,7 @@ export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, user
             </div>
             {pwError && <p style={styles.errorText}>Password needs to be at least 6 characters.</p>}
           </div>
-
+ 
           <label style={styles.rememberRow}>
             <input
               type="checkbox"
@@ -99,7 +122,7 @@ export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, user
             />
             Keep me signed in
           </label>
-
+ 
           <button
             style={{ ...styles.primaryBtnFull, opacity: loading ? 0.7 : 1 }}
             type="button"
@@ -108,9 +131,10 @@ export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, user
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>
-
+ 
+          {serverError && <p style={styles.errorText}>{serverError}</p>}
           {success && <div style={styles.successBox}>Signed in successfully.</div>}
-
+ 
           <p style={styles.authFooter}>
             New here? <span style={styles.authLink} onClick={onSignUpClick}>Create an account</span>
           </p>

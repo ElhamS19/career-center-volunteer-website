@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
  
-/* ── Database connection ── */
+// database connection
 const ca = readFileSync(resolve("ca.pem"));
  
 const db = await mysql.createConnection({
@@ -27,7 +27,7 @@ const db = await mysql.createConnection({
  
 console.log("✅ Connected to Aiven MySQL!");
  
-/* ── Sign Up route ── */
+// Signup route
 app.post("/api/signup", async (req, res) => {
   const { full_name, email, password } = req.body;
  
@@ -59,8 +59,43 @@ app.post("/api/signup", async (req, res) => {
     res.status(500).json({ error: "Server error. Please try again." });
   }
 });
+ // Login route
+app.post("/api/login", async (req, res) => {
+  const { email, password } = req.body;
  
-/* ── Start server ── */
+  if (!email || !password) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+ 
+  try {
+    const [rows] = await db.execute(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+ 
+    if (rows.length === 0) {
+      return res.status(401).json({ error: "No account found with that email." });
+    }
+ 
+    const user = rows[0];
+    const match = await bcrypt.compare(password, user.password);
+ 
+    if (!match) {
+      return res.status(401).json({ error: "Incorrect password." });
+    }
+ 
+    res.status(200).json({
+      message: "Login successful!",
+      user: { id: user.id, full_name: user.full_name, email: user.email },
+    });
+ 
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Server error. Please try again." });
+  }
+});
+ 
+// Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
