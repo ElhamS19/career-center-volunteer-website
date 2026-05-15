@@ -18,6 +18,7 @@ export default function ProfilePage({
   onLogoutClick,
   onHomeClick,
   onEventsClick,
+  onCalendarClick,
   onLoginClick,
   onHelpClick,
 }) {
@@ -96,7 +97,7 @@ export default function ProfilePage({
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onLoginClick={onLoginClick} onHelpClick={onHelpClick} userAvatar={initials} />
+      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onLoginClick={onLoginClick} onHelpClick={onHelpClick} userAvatar={initials} />
 
       <div style={styles.profileBody}>
         <div style={styles.profileContainer}>

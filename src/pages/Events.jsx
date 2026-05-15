@@ -17,6 +17,7 @@ export default function Events({
   onHomeClick,
   onLoginClick,
   onEventsClick,
+  onCalendarClick,
   onHelpClick,
   userAvatar,
   onAvatarClick,
@@ -26,6 +27,7 @@ export default function Events({
       <Navbar
         onHomeClick={onHomeClick}
         onEventsClick={onEventsClick}
+        onCalendarClick={onCalendarClick}
         onLoginClick={onLoginClick}
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}

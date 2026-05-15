@@ -24,12 +24,13 @@ const faqs = [
   },
 ];
 
-export default function Help({ onHomeClick, onEventsClick, onLoginClick, onHelpClick, userAvatar, onAvatarClick }) {
+export default function Help({ onHomeClick, onEventsClick, onCalendarClick, onLoginClick, onHelpClick, userAvatar, onAvatarClick }) {
   return (
     <div style={styles.page}>
       <Navbar
         onHomeClick={onHomeClick}
         onEventsClick={onEventsClick}
+        onCalendarClick={onCalendarClick}
         onLoginClick={onLoginClick}
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}

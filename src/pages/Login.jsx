@@ -5,6 +5,7 @@ import styles from "../styles";
 export default function Login({
   onHomeClick,
   onEventsClick,
+  onCalendarClick,
   onSignUpClick,
   onForgotPasswordClick,
   onHelpClick,
@@ -70,7 +71,7 @@ export default function Login({
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
+      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <div style={styles.authBody}>
         <div style={styles.authContainer}>
