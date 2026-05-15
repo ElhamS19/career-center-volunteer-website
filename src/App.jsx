@@ -11,6 +11,7 @@ import LogoutSuccessPage from "./pages/LogoutSuccessPage";
 import Help from "./pages/Help";
 import Events from "./pages/Events";
 import Calendar from "./pages/Calendar";
+import About from "./pages/About";
 
 /* key frame for fade in animation */
 const styleTag = document.createElement("style");
@@ -132,6 +133,7 @@ export default function App() {
           onEventsClick={() => setCurrentPage("events")}
           onCalendarClick={() => setCurrentPage("calendar")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -143,6 +145,7 @@ export default function App() {
           onEventsClick={() => setCurrentPage("events")}
           onCalendarClick={() => setCurrentPage("calendar")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -154,6 +157,7 @@ export default function App() {
           onEventsClick={() => setCurrentPage("events")}
           onCalendarClick={() => setCurrentPage("calendar")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -166,6 +170,7 @@ export default function App() {
           onSignUpClick={() => setCurrentPage("signup")}
           onForgotPasswordClick={() => setCurrentPage("forgotPassword")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           onLoginSuccess={handleLoginSuccess}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
@@ -179,6 +184,7 @@ export default function App() {
           onEventsClick={() => setCurrentPage("events")}
           onCalendarClick={() => setCurrentPage("calendar")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -190,6 +196,7 @@ export default function App() {
           onCalendarClick={() => setCurrentPage("calendar")}
           onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -206,6 +213,7 @@ export default function App() {
           onCalendarClick={() => setCurrentPage("calendar")}
           onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
         />
       )}
       {currentPage === "passwordChange" && (
@@ -220,6 +228,7 @@ export default function App() {
           onCalendarClick={() => setCurrentPage("calendar")}
           onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -231,6 +240,7 @@ export default function App() {
           onCalendarClick={() => setCurrentPage("calendar")}
           onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -242,6 +252,7 @@ export default function App() {
           onEventsClick={() => setCurrentPage("events")}
           onCalendarClick={() => setCurrentPage("calendar")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -253,6 +264,19 @@ export default function App() {
           onCalendarClick={() => setCurrentPage("calendar")}
           onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
+          onAboutClick={() => setCurrentPage("about")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
+        />
+      )}
+      {currentPage === "about" && (
+        <About
+          onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
+          onCalendarClick={() => setCurrentPage("calendar")}
+          onAboutClick={() => setCurrentPage("about")}
+          onHelpClick={() => setCurrentPage("help")}
+          onLoginClick={() => setCurrentPage("login")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />

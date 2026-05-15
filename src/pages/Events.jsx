@@ -18,6 +18,7 @@ export default function Events({
   onLoginClick,
   onEventsClick,
   onCalendarClick,
+  onAboutClick,
   onHelpClick,
   userAvatar,
   onAvatarClick,
@@ -29,6 +30,7 @@ export default function Events({
         onEventsClick={onEventsClick}
         onCalendarClick={onCalendarClick}
         onLoginClick={onLoginClick}
+        onAboutClick={onAboutClick}
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}
         onAvatarClick={onAvatarClick}

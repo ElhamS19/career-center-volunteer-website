@@ -8,6 +8,7 @@ export default function ForgotPasswordPage({
   onHomeClick,
   onEventsClick,
   onCalendarClick,
+  onAboutClick,
   onHelpClick,
   userAvatar,
   onAvatarClick,
@@ -116,6 +117,7 @@ export default function ForgotPasswordPage({
         onHomeClick={onHomeClick}
         onEventsClick={onEventsClick}
         onCalendarClick={onCalendarClick}
+        onAboutClick={onAboutClick}
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}
         onAvatarClick={onAvatarClick}

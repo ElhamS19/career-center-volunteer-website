@@ -6,6 +6,7 @@ export default function Navbar({
   onHomeClick,
   onEventsClick,
   onCalendarClick,
+  onAboutClick,
   onLoginClick,
   onHelpClick,
   userAvatar,
@@ -40,7 +41,15 @@ export default function Navbar({
         >
           Calendar
         </span>
-        <span style={styles.navLink}>About</span>
+        <span
+          style={{
+            ...styles.navLink,
+            cursor: onAboutClick ? "pointer" : "default",
+          }}
+          onClick={onAboutClick}
+        >
+          About
+        </span>
         <span
           style={{
             ...styles.navLink,

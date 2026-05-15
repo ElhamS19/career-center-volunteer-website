@@ -8,6 +8,7 @@ export default function Login({
   onCalendarClick,
   onSignUpClick,
   onForgotPasswordClick,
+  onAboutClick,
   onHelpClick,
   onLoginSuccess,
   userAvatar,
@@ -71,7 +72,7 @@ export default function Login({
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
+      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onAboutClick={onAboutClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <div style={styles.authBody}>
         <div style={styles.authContainer}>
