@@ -312,6 +312,11 @@ const styles = {
     cursor: "pointer",
     fontFamily: fonts.body,
   },
+  primaryBtnDanger: {
+    backgroundColor: colors.danger,
+    color: "white",
+    border: "none",
+  },
   primaryBtnFull: {
     width: "100%",
     backgroundColor: colors.green,
@@ -526,6 +531,11 @@ const styles = {
     cursor: "pointer",
     fontFamily: fonts.body,
     flexShrink: 0,
+  },
+  eventBtnDanger: {
+    backgroundColor: colors.danger,
+    color: "white",
+    border: `1px solid ${colors.danger}`,
   },
 
   authBody: {

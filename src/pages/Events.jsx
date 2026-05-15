@@ -1,17 +1,7 @@
 import Navbar from "../components/Navbar";
 import EventCard from "../components/EventCard";
 import styles from "../styles";
-
-const allEvents = [
-  { month: "Apr", day: "22", title: "Employer on Campus", time: "10:00 am - 1:00 pm", location: "Library Quad" },
-  { month: "Apr", day: "22", title: "Here to Career",     time: "2:00 pm - 3:30 pm",  location: "Career Center" },
-  { month: "May", day: "06", title: "Employer on Campus", time: "10:00 am - 2:00 pm", location: "University Union" },
-  { month: "May", day: "15", title: "Resume Workshop",    time: "11:00 am - 12:00 pm", location: "Career Center" },
-  { month: "May", day: "20", title: "Networking Event",   time: "4:00 pm - 6:00 pm",  location: "Student Center" },
-  { month: "Jun", day: "01", title: "Job Fair",           time: "9:00 am - 3:00 pm",  location: "Student Center" },
-  { month: "Jun", day: "10", title: "Mock Interviews",    time: "1:00 pm - 4:00 pm",  location: "Career Center" },
-  { month: "Jun", day: "15", title: "Alumni Panel",       time: "6:00 pm - 8:00 pm",  location: "Auditorium" },
-];
+import { allEvents } from "../data/events";
 
 export default function Events({
   onHomeClick,
@@ -22,6 +12,9 @@ export default function Events({
   onHelpClick,
   userAvatar,
   onAvatarClick,
+  isLoggedIn,
+  registeredEventIds,
+  onToggleEventRegistration,
 }) {
   return (
     <div style={styles.page}>
@@ -52,9 +45,19 @@ export default function Events({
         </div>
 
         <div style={styles.eventList}>
-          {allEvents.map((e, i) => (
-            <EventCard key={i} {...e} onSignUp={onLoginClick} />
-          ))}
+          {allEvents.map((event) => {
+            const isRegistered = registeredEventIds.includes(event.id);
+
+            return (
+              <EventCard
+                key={event.id}
+                {...event}
+                onSignUp={() => (isLoggedIn ? onToggleEventRegistration(event.id) : onLoginClick())}
+                actionLabel={isRegistered ? "Unregister" : "Sign Up"}
+                actionStyle={isRegistered ? styles.eventBtnDanger : undefined}
+              />
+            );
+          })}
         </div>
       </section>
     </div>

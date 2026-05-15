@@ -1,7 +1,16 @@
 import Icon from "./Icon";
 import styles from "../styles";
 
-export default function EventCard({ month, day, title, time, location, onSignUp }) {
+export default function EventCard({
+  month,
+  day,
+  title,
+  time,
+  location,
+  onSignUp,
+  actionLabel = "Sign Up",
+  actionStyle,
+}) {
   return (
     <div style={styles.eventCard}>
       <div style={styles.eventDate}>
@@ -23,8 +32,8 @@ export default function EventCard({ month, day, title, time, location, onSignUp 
         </p>
       </div>
 
-      <button style={styles.eventBtn} onClick={onSignUp} type="button">
-        Sign up
+      <button style={{ ...styles.eventBtn, ...actionStyle }} onClick={onSignUp} type="button">
+        {actionLabel}
       </button>
     </div>
   );

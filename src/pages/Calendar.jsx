@@ -1,17 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import styles from "../styles";
-
-const events = [
-  { month: "Apr", day: "22", title: "Employer on Campus", time: "10:00 am - 1:00 pm", location: "Library Quad" },
-  { month: "Apr", day: "22", title: "Here to Career", time: "2:00 pm - 3:30 pm", location: "Career Center" },
-  { month: "May", day: "06", title: "Employer on Campus", time: "10:00 am - 2:00 pm", location: "University Union" },
-  { month: "May", day: "15", title: "Resume Workshop", time: "11:00 am - 12:00 pm", location: "Career Center" },
-  { month: "May", day: "20", title: "Networking Event", time: "4:00 pm - 6:00 pm", location: "Student Center" },
-  { month: "Jun", day: "01", title: "Job Fair", time: "9:00 am - 3:00 pm", location: "Student Center" },
-  { month: "Jun", day: "10", title: "Mock Interviews", time: "1:00 pm - 4:00 pm", location: "Career Center" },
-  { month: "Jun", day: "15", title: "Alumni Panel", time: "6:00 pm - 8:00 pm", location: "Auditorium" },
-];
+import { allEvents } from "../data/events";
 
 const monthConfig = {
   Apr: { label: "April", length: 30, startOffset: 3 },
@@ -31,10 +21,13 @@ export default function Calendar({
   onHelpClick,
   userAvatar,
   onAvatarClick,
+  isLoggedIn,
+  registeredEventIds,
+  onToggleEventRegistration,
 }) {
   const [selectedMonth, setSelectedMonth] = useState("May");
 
-  const eventMap = events.reduce((acc, event) => {
+  const eventMap = allEvents.reduce((acc, event) => {
     const key = `${event.month}-${event.day}`;
     acc[key] = event;
     return acc;
@@ -104,6 +97,8 @@ export default function Calendar({
           {days.map((day) => {
             const dateKey = `${selectedMonth}-${String(day).padStart(2, "0")}`;
             const event = eventMap[dateKey];
+            const isRegistered = event ? registeredEventIds.includes(event.id) : false;
+
             return (
               <div key={dateKey} style={styles.calendarCell}>
                 <div style={styles.calendarCellDate}>{day}</div>
@@ -112,8 +107,12 @@ export default function Calendar({
                     <p style={styles.calendarCellEventTitle}>{event.title}</p>
                     <p style={styles.calendarCellMeta}>{event.time}</p>
                     <p style={styles.calendarCellMeta}>{event.location}</p>
-                    <button style={styles.primaryBtn} type="button" onClick={onLoginClick}>
-                      Sign up
+                    <button
+                      style={isRegistered ? { ...styles.primaryBtn, ...styles.primaryBtnDanger } : styles.primaryBtn}
+                      type="button"
+                      onClick={() => (isLoggedIn ? onToggleEventRegistration(event.id) : onLoginClick())}
+                    >
+                      {isRegistered ? "Unregister" : "Sign Up"}
                     </button>
                   </div>
                 ) : (

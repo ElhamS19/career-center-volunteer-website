@@ -2,14 +2,9 @@ import Navbar from "../components/Navbar";
 import EventCard from "../components/EventCard";
 import Icon from "../components/Icon";
 import styles from "../styles";
+import { featuredEvents } from "../data/events";
 
-const events = [
-  { month: "Apr", day: "22", title: "Employer on Campus", time: "10:00 am - 1:00 pm", location: "Library Quad" },
-  { month: "Apr", day: "22", title: "Here to Career",     time: "2:00 pm - 3:30 pm",  location: "Career Center" },
-  { month: "May", day: "06", title: "Employer on Campus", time: "10:00 am - 2:00 pm", location: "University Union" },
-];
-
-export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEventsClick, onCalendarClick, onAboutClick, onHelpClick, userAvatar, onAvatarClick }) {
+export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEventsClick, onCalendarClick, onAboutClick, onHelpClick, userAvatar, onAvatarClick, isLoggedIn, registeredEventIds, onToggleEventRegistration }) {
   function scrollToEvents() {
     const el = document.getElementById("upcoming-events");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -50,9 +45,19 @@ export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEvent
         </div>
 
         <div style={styles.eventList}>
-          {events.map((e, i) => (
-            <EventCard key={i} {...e} onSignUp={onLoginClick} />
-          ))}
+          {featuredEvents.map((event) => {
+            const isRegistered = registeredEventIds.includes(event.id);
+
+            return (
+              <EventCard
+                key={event.id}
+                {...event}
+                onSignUp={() => (isLoggedIn ? onToggleEventRegistration(event.id) : onLoginClick())}
+                actionLabel={isRegistered ? "Unregister" : "Sign Up"}
+                actionStyle={isRegistered ? styles.eventBtnDanger : undefined}
+              />
+            );
+          })}
         </div>
       </section>
     </div>

@@ -37,8 +37,10 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [userAvatar, setUserAvatar] = useState("");
   const [user, setUser] = useState(null);
+  const [registeredEventIds, setRegisteredEventIds] = useState([]);
   const [passwordPageMode, setPasswordPageMode] = useState("account");
   const [resetEmail, setResetEmail] = useState("");
+  const isLoggedIn = Boolean(user);
 
   function handleLoginSuccess(userData) {
     const fullName = userData?.fullName || `${userData?.firstName || ""} ${userData?.lastName || ""}`.trim();
@@ -63,7 +65,16 @@ export default function App() {
   function handleLogout() {
     setUser(null);
     setUserAvatar("");
+    setRegisteredEventIds([]);
     setCurrentPage("logoutSuccess");
+  }
+
+  function handleToggleEventRegistration(eventId) {
+    setRegisteredEventIds((prev) =>
+      prev.includes(eventId)
+        ? prev.filter((id) => id !== eventId)
+        : [...prev, eventId]
+    );
   }
 
   function handleOpenChangePassword(mode = "account") {
@@ -136,6 +147,9 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          isLoggedIn={isLoggedIn}
+          registeredEventIds={registeredEventIds}
+          onToggleEventRegistration={handleToggleEventRegistration}
         />
       )}
       {currentPage === "events" && (
@@ -148,6 +162,9 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          isLoggedIn={isLoggedIn}
+          registeredEventIds={registeredEventIds}
+          onToggleEventRegistration={handleToggleEventRegistration}
         />
       )}
       {currentPage === "calendar" && (
@@ -160,6 +177,9 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          isLoggedIn={isLoggedIn}
+          registeredEventIds={registeredEventIds}
+          onToggleEventRegistration={handleToggleEventRegistration}
         />
       )}
       {currentPage === "login" && (
