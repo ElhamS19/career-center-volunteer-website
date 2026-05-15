@@ -512,6 +512,12 @@ const styles = {
     marginTop: "5px",
     fontWeight: 500,
   },
+  authActionRow: {
+    display: "flex",
+    gap: "10px",
+    marginTop: "18px",
+    flexWrap: "wrap",
+  },
 
   profileBody: {
     flex: 1,

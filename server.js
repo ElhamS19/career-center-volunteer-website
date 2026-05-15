@@ -161,8 +161,6 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).json({ error: "Incorrect password." });
     }
  
-    const { firstName, lastName } = splitFullName(user.full_name);
-
     res.status(200).json({
       message: "Login successful!",
       user: buildUserResponse(user),
@@ -244,6 +242,99 @@ app.post("/api/profile", async (req, res) => {
     });
   } catch (err) {
     console.error("Profile update error:", err);
+    res.status(500).json({ error: "Server error. Please try again." });
+  }
+});
+
+// Change password route
+app.post("/api/password/change", async (req, res) => {
+  const { userId, currentPassword, newPassword } = req.body;
+
+  if (!userId || !currentPassword || !newPassword) {
+    return res.status(400).json({ error: "Current password and new password are required." });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "New password must be at least 6 characters." });
+  }
+
+  try {
+    const [rows] = await db.execute(
+      "SELECT id, password FROM users WHERE id = ?",
+      [userId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const user = rows[0];
+    const currentPasswordMatches = await bcrypt.compare(currentPassword, user.password);
+
+    if (!currentPasswordMatches) {
+      return res.status(401).json({ error: "Current password is incorrect." });
+    }
+
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+
+    if (isSamePassword) {
+      return res.status(400).json({ error: "Choose a password you have not used for this account." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await db.execute(
+      "UPDATE users SET password = ? WHERE id = ?",
+      [hashedPassword, userId]
+    );
+
+    res.status(200).json({ message: "Your password has been updated." });
+  } catch (err) {
+    console.error("Password change error:", err);
+    res.status(500).json({ error: "Server error. Please try again." });
+  }
+});
+
+// Reset password route
+app.post("/api/password/reset", async (req, res) => {
+  const { email, newPassword } = req.body;
+  const normalizedEmail = email?.trim();
+
+  if (!normalizedEmail || !newPassword) {
+    return res.status(400).json({ error: "Email and new password are required." });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "New password must be at least 6 characters." });
+  }
+
+  try {
+    const [rows] = await db.execute(
+      "SELECT id, password FROM users WHERE email = ?",
+      [normalizedEmail]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "No account found with that email." });
+    }
+
+    const user = rows[0];
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+
+    if (isSamePassword) {
+      return res.status(400).json({ error: "Choose a password you have not used for this account." });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await db.execute(
+      "UPDATE users SET password = ? WHERE id = ?",
+      [hashedPassword, user.id]
+    );
+
+    res.status(200).json({ message: "Your password has been reset." });
+  } catch (err) {
+    console.error("Password reset error:", err);
     res.status(500).json({ error: "Server error. Please try again." });
   }
 });

@@ -11,7 +11,14 @@ function getInitials(fullName) {
   return (first + last).toUpperCase() || "?";
 }
 
-export default function ProfilePage({ user, onSave, onLogoutClick, onHomeClick, onHelpClick }) {
+export default function ProfilePage({
+  user,
+  onSave,
+  onChangePasswordClick,
+  onLogoutClick,
+  onHomeClick,
+  onHelpClick,
+}) {
   const firstName = user?.firstName || "";
   const lastName = user?.lastName || "";
   const defaultFullName = user?.fullName || `${firstName} ${lastName}`.trim();
@@ -154,8 +161,20 @@ export default function ProfilePage({ user, onSave, onLogoutClick, onHomeClick, 
           <div style={{ marginTop: "8px" }}>
             <label style={styles.label}>Password</label>
             <div style={styles.passwordRow}>
-              <span style={styles.passwordRowText}>Last changed 3 months ago</span>
-              <span style={styles.authLink} role="button">Change</span>
+              <span style={styles.passwordRowText}>Update your password</span>
+              <span
+                style={styles.authLink}
+                role="button"
+                tabIndex={0}
+                onClick={onChangePasswordClick}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onChangePasswordClick?.();
+                  }
+                }}
+              >
+                Change
+              </span>
             </div>
           </div>
 

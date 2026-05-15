@@ -2,7 +2,15 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import styles from "../styles";
 
-export default function Login({ onHomeClick, onSignUpClick, onHelpClick, onLoginSuccess, userAvatar, onAvatarClick }) {
+export default function Login({
+  onHomeClick,
+  onSignUpClick,
+  onForgotPasswordClick,
+  onHelpClick,
+  onLoginSuccess,
+  userAvatar,
+  onAvatarClick,
+}) {
   const [email, setEmail]           = useState("");
   const [password, setPassword]     = useState("");
   const [remember, setRemember]     = useState(true);
@@ -49,9 +57,9 @@ export default function Login({ onHomeClick, onSignUpClick, onHelpClick, onLogin
         setTimeout(() => onLoginSuccess(data.user), 400);
       }
 
-    } catch (err) {
+    } catch {
       setLoading(false);
-      setServerError("Could not connect to server. Make sure it is running.");
+      setServerError("Could not connect to server.");
     }
   }
 
@@ -87,7 +95,19 @@ export default function Login({ onHomeClick, onSignUpClick, onHelpClick, onLogin
           <div style={styles.formGroup}>
             <div style={styles.labelRow}>
               <label style={styles.label}>Password</label>
-              <span style={styles.forgotLink}>Forgot?</span>
+              <span
+                style={styles.forgotLink}
+                role="button"
+                tabIndex={0}
+                onClick={onForgotPasswordClick}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    onForgotPasswordClick?.();
+                  }
+                }}
+              >
+                Forgot?
+              </span>
             </div>
             <div style={styles.passwordWrap}>
               <input

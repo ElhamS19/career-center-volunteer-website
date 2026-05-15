@@ -3,7 +3,9 @@ import styles from "./styles";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUpPage from "./pages/SignUpPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ProfilePage from "./pages/ProfilePage";
+import PasswordChangePage from "./pages/PasswordChangePage";
 import SaveSuccessPage from "./pages/SaveSuccessPage";
 import LogoutSuccessPage from "./pages/LogoutSuccessPage";
 import Help from "./pages/Help";
@@ -32,6 +34,8 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [userAvatar, setUserAvatar] = useState("");
   const [user, setUser] = useState(null);
+  const [passwordPageMode, setPasswordPageMode] = useState("account");
+  const [resetEmail, setResetEmail] = useState("");
 
   function handleLoginSuccess(userData) {
     const fullName = userData?.fullName || `${userData?.firstName || ""} ${userData?.lastName || ""}`.trim();
@@ -59,6 +63,63 @@ export default function App() {
     setCurrentPage("logoutSuccess");
   }
 
+  function handleOpenChangePassword(mode = "account") {
+    setPasswordPageMode(mode);
+    setCurrentPage("passwordChange");
+  }
+
+  function handleForgotPasswordNext(email) {
+    setResetEmail(email);
+    handleOpenChangePassword("reset");
+  }
+
+  async function handlePasswordSubmit({ currentPassword, newPassword }) {
+    if (!user?.id) {
+      throw new Error("You need to be signed in to change your password.");
+    }
+
+    const response = await fetch("http://localhost:5000/api/password/change", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user.id,
+        currentPassword,
+        newPassword,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to update password.");
+    }
+
+    return data;
+  }
+
+  async function handleResetPasswordSubmit({ newPassword }) {
+    if (!resetEmail) {
+      throw new Error("Missing reset email.");
+    }
+
+    const response = await fetch("http://localhost:5000/api/password/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: resetEmail,
+        newPassword,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to reset password.");
+    }
+
+    return data;
+  }
+
   return (
     <div style={styles.body}>
       {currentPage === "home" && (
@@ -75,8 +136,19 @@ export default function App() {
         <Login
           onHomeClick={() => setCurrentPage("home")}
           onSignUpClick={() => setCurrentPage("signup")}
+          onForgotPasswordClick={() => setCurrentPage("forgotPassword")}
           onHelpClick={() => setCurrentPage("help")}
           onLoginSuccess={handleLoginSuccess}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
+        />
+      )}
+      {currentPage === "forgotPassword" && (
+        <ForgotPasswordPage
+          onNext={handleForgotPasswordNext}
+          onBackClick={() => setCurrentPage("login")}
+          onHomeClick={() => setCurrentPage("home")}
+          onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -95,9 +167,23 @@ export default function App() {
           key={user?.id || "profile"}
           user={user}
           onSave={handleProfileSave}
+          onChangePasswordClick={() => handleOpenChangePassword("account")}
           onLogoutClick={handleLogout}
           onHomeClick={() => setCurrentPage("home")}
           onHelpClick={() => setCurrentPage("help")}
+        />
+      )}
+      {currentPage === "passwordChange" && (
+        <PasswordChangePage
+          mode={passwordPageMode}
+          user={user}
+          resetEmail={resetEmail}
+          onSubmit={passwordPageMode === "account" ? handlePasswordSubmit : handleResetPasswordSubmit}
+          onBackClick={() => setCurrentPage(passwordPageMode === "account" ? "profile" : "forgotPassword")}
+          onHomeClick={() => setCurrentPage("home")}
+          onHelpClick={() => setCurrentPage("help")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
         />
       )}
       {currentPage === "saveSuccess" && (
