@@ -27,9 +27,11 @@ export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEvent
           <button style={styles.primaryBtn} type="button" onClick={scrollToEvents}>
             Browse events
           </button>
-          <button style={styles.ghostBtn} type="button" onClick={onSignupClick}>
-            Sign up to volunteer
-          </button>
+          {!isLoggedIn && (
+            <button style={styles.ghostBtn} type="button" onClick={onSignupClick}>
+              Sign up to volunteer
+            </button>
+          )}
         </div>
       </section>
 

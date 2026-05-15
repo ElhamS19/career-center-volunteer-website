@@ -6,7 +6,6 @@ import SignUpPage from "./pages/SignUpPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ProfilePage from "./pages/ProfilePage";
 import PasswordChangePage from "./pages/PasswordChangePage";
-import SaveSuccessPage from "./pages/SaveSuccessPage";
 import LogoutSuccessPage from "./pages/LogoutSuccessPage";
 import Help from "./pages/Help";
 import Events from "./pages/Events";
@@ -53,7 +52,6 @@ export default function App() {
     const fullName = updatedUser?.fullName || `${updatedUser?.firstName || ""} ${updatedUser?.lastName || ""}`.trim();
     setUser((prev) => ({ ...prev, ...updatedUser }));
     setUserAvatar(getInitials(fullName));
-    setCurrentPage("saveSuccess");
   }
 
   function handleAvatarClick() {
@@ -249,19 +247,6 @@ export default function App() {
           resetEmail={resetEmail}
           onSubmit={passwordPageMode === "account" ? handlePasswordSubmit : handleResetPasswordSubmit}
           onBackClick={() => setCurrentPage(passwordPageMode === "account" ? "profile" : "forgotPassword")}
-          onHomeClick={() => setCurrentPage("home")}
-          onEventsClick={() => setCurrentPage("events")}
-          onCalendarClick={() => setCurrentPage("calendar")}
-          onLoginClick={() => setCurrentPage("login")}
-          onHelpClick={() => setCurrentPage("help")}
-          onAboutClick={() => setCurrentPage("about")}
-          userAvatar={userAvatar}
-          onAvatarClick={handleAvatarClick}
-          onLogoutClick={handleLogout}
-        />
-      )}
-      {currentPage === "saveSuccess" && (
-        <SaveSuccessPage
           onHomeClick={() => setCurrentPage("home")}
           onEventsClick={() => setCurrentPage("events")}
           onCalendarClick={() => setCurrentPage("calendar")}
