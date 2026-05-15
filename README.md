@@ -47,7 +47,7 @@ Features such as account management, search functionality, event tracking, and n
 - Figma (UI Design)
 
 ### Backend
-- Python (Flask)
+- Node.js (Express)
 
 ### Database
 - MySQL
