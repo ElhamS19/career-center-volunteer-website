@@ -9,6 +9,7 @@ import PasswordChangePage from "./pages/PasswordChangePage";
 import SaveSuccessPage from "./pages/SaveSuccessPage";
 import LogoutSuccessPage from "./pages/LogoutSuccessPage";
 import Help from "./pages/Help";
+import Events from "./pages/Events";
 
 /* key frame for fade in animation */
 const styleTag = document.createElement("style");
@@ -127,6 +128,17 @@ export default function App() {
           onHomeClick={() => setCurrentPage("home")}
           onLoginClick={() => setCurrentPage("login")}
           onSignupClick={() => setCurrentPage("signup")}
+          onEventsClick={() => setCurrentPage("events")}
+          onHelpClick={() => setCurrentPage("help")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
+        />
+      )}
+      {currentPage === "events" && (
+        <Events
+          onHomeClick={() => setCurrentPage("home")}
+          onLoginClick={() => setCurrentPage("login")}
+          onEventsClick={() => setCurrentPage("events")}
           onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
@@ -135,6 +147,7 @@ export default function App() {
       {currentPage === "login" && (
         <Login
           onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
           onSignUpClick={() => setCurrentPage("signup")}
           onForgotPasswordClick={() => setCurrentPage("forgotPassword")}
           onHelpClick={() => setCurrentPage("help")}
@@ -148,6 +161,7 @@ export default function App() {
           onNext={handleForgotPasswordNext}
           onBackClick={() => setCurrentPage("login")}
           onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
           onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
@@ -156,6 +170,7 @@ export default function App() {
       {currentPage === "signup" && (
         <SignUpPage
           onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
           onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
@@ -170,6 +185,8 @@ export default function App() {
           onChangePasswordClick={() => handleOpenChangePassword("account")}
           onLogoutClick={handleLogout}
           onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
+          onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
         />
       )}
@@ -181,6 +198,8 @@ export default function App() {
           onSubmit={passwordPageMode === "account" ? handlePasswordSubmit : handleResetPasswordSubmit}
           onBackClick={() => setCurrentPage(passwordPageMode === "account" ? "profile" : "forgotPassword")}
           onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
+          onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
@@ -189,6 +208,8 @@ export default function App() {
       {currentPage === "saveSuccess" && (
         <SaveSuccessPage
           onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
+          onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
@@ -198,6 +219,7 @@ export default function App() {
         <LogoutSuccessPage
           onLoginClick={() => setCurrentPage("login")}
           onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
           onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
@@ -206,6 +228,7 @@ export default function App() {
       {currentPage === "help" && (
         <Help
           onHomeClick={() => setCurrentPage("home")}
+          onEventsClick={() => setCurrentPage("events")}
           onLoginClick={() => setCurrentPage("login")}
           onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
