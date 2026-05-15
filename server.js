@@ -56,6 +56,16 @@ function isGmailHost(host) {
   return /(^|\.)gmail\.com$/i.test(host) || /^smtp\.gmail\.com$/i.test(host);
 }
 
+function normalizeSmtpPassword(pass, host, service) {
+  const normalizedService = service.toLowerCase();
+
+  if (normalizedService === "gmail" || isGmailHost(host)) {
+    return pass.replace(/\s+/g, "");
+  }
+
+  return pass;
+}
+
 function classifyEmailError(error) {
   const responseCode = Number(error?.responseCode || 0);
   const code = String(error?.code || "").toUpperCase();
@@ -79,10 +89,12 @@ function classifyEmailError(error) {
 function getEmailTransporter() {
   const host = readEnv("SMTP_HOST");
   const user = readEnv("SMTP_USER");
-  const pass = readEnv("SMTP_PASS");
+  const service = readEnv("SMTP_SERVICE");
+  const pass = normalizeSmtpPassword(readEnv("SMTP_PASS"), host, service);
   const port = Number(readEnv("SMTP_PORT") || "587");
   const secure = parseBooleanEnv("SMTP_SECURE", port === 465);
-  const service = readEnv("SMTP_SERVICE");
+  const tlsServerName = readEnv("SMTP_TLS_SERVERNAME");
+  const smtpFamily = Number(readEnv("SMTP_FAMILY") || "0");
   const missingConfig = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS"].filter((key) => !readEnv(key));
 
   if (missingConfig.length > 0) {
@@ -97,11 +109,20 @@ function getEmailTransporter() {
       user,
       pass,
     },
+    ignoreTLS: parseBooleanEnv("SMTP_IGNORE_TLS", false),
     requireTLS: parseBooleanEnv("SMTP_REQUIRE_TLS", !secure),
     connectionTimeout: Number(readEnv("SMTP_CONNECTION_TIMEOUT") || "10000"),
     greetingTimeout: Number(readEnv("SMTP_GREETING_TIMEOUT") || "10000"),
     socketTimeout: Number(readEnv("SMTP_SOCKET_TIMEOUT") || "15000"),
+    tls: {
+      servername: tlsServerName || host,
+      rejectUnauthorized: parseBooleanEnv("SMTP_TLS_REJECT_UNAUTHORIZED", true),
+    },
   };
+
+  if (smtpFamily === 4 || smtpFamily === 6) {
+    transportConfig.family = smtpFamily;
+  }
 
   if (service) {
     transportConfig.service = service;
@@ -119,7 +140,9 @@ async function sendResetCodeEmail(email, code) {
   const html = `<p>Your password reset code is: <strong>${code}</strong>.</p><p>Enter this code to continue.</p>`;
   const from = readEnv("EMAIL_FROM") || readEnv("SMTP_USER");
 
-  await transporter.verify();
+  if (parseBooleanEnv("SMTP_VERIFY_BEFORE_SEND", false)) {
+    await transporter.verify();
+  }
 
   await transporter.sendMail({
     from,
