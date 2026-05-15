@@ -39,7 +39,7 @@ export default function Login({
     setLoading(true);
 
     try {
-      const response = await fetch("http://https://career-center-volunteer-website-production.up.railway.app/api/login", {
+      const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

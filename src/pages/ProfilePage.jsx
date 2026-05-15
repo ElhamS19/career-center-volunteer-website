@@ -65,7 +65,7 @@ export default function ProfilePage({
     setLoading(true);
 
     try {
-      const response = await fetch("http://https://career-center-volunteer-website-production.up.railway.app/api/profile", {
+      const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
