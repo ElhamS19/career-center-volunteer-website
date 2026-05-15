@@ -10,6 +10,11 @@ const events = [
 ];
 
 export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEventsClick, onCalendarClick, onAboutClick, onHelpClick, userAvatar, onAvatarClick }) {
+  function scrollToEvents() {
+    const el = document.getElementById("upcoming-events");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   return (
     <div style={styles.page}>
       <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onLoginClick={onLoginClick} onAboutClick={onAboutClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
@@ -24,7 +29,7 @@ export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEvent
           workshops, and on-campus hiring.
         </p>
         <div style={styles.heroBtnRow}>
-          <button style={styles.primaryBtn} type="button" onClick={onEventsClick}>
+          <button style={styles.primaryBtn} type="button" onClick={scrollToEvents}>
             Browse events
           </button>
           <button style={styles.ghostBtn} type="button" onClick={onSignupClick}>
