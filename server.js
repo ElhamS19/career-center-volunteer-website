@@ -4,12 +4,72 @@ import express from "express";
 import mysql from "mysql2/promise";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import nodemailer from "nodemailer";
 import { readFileSync } from "fs";
 import { resolve } from "path";
- 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+ 
+const passwordResetCodes = new Map();
+const verifiedResetEmails = new Set();
+ 
+function generateResetCode() {
+  return String(Math.floor(100000 + Math.random() * 900000));
+}
+ 
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+ 
+function storeResetCode(email, code) {
+  passwordResetCodes.set(email, {
+    code,
+    expiresAt: Date.now() + 10 * 60 * 1000,
+  });
+}
+ 
+function cleanupResetCode(email) {
+  passwordResetCodes.delete(email);
+  verifiedResetEmails.delete(email);
+}
+ 
+function getEmailTransporter() {
+  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    return null;
+  }
+ 
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || "587"),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+}
+ 
+async function sendResetCodeEmail(email, code) {
+  const transporter = getEmailTransporter();
+  const subject = "Your Sac State Career Center password reset code";
+  const text = `Your password reset code is ${code}. Enter this code in the app to proceed.`;
+  const html = `<p>Your password reset code is <strong>${code}</strong>.</p><p>Enter this code in the app to continue.</p>`;
+ 
+  if (!transporter) {
+    console.log(`Password reset code for ${email}: ${code}`);
+    return;
+  }
+ 
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM || process.env.SMTP_USER,
+    to: email,
+    subject,
+    text,
+    html,
+  });
+}
  
 function splitFullName(name) {
   if (!name) return { firstName: "", lastName: "" };
@@ -295,6 +355,73 @@ app.post("/api/password/change", async (req, res) => {
   }
 });
 
+// Request password reset code route
+app.post("/api/password/request-reset", async (req, res) => {
+  const { email } = req.body;
+  const normalizedEmail = email?.trim();
+
+  if (!normalizedEmail || !isValidEmail(normalizedEmail)) {
+    return res.status(400).json({ error: "A valid email address is required." });
+  }
+
+  try {
+    const [rows] = await db.execute(
+      "SELECT id FROM users WHERE email = ?",
+      [normalizedEmail]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "No account found with that email." });
+    }
+
+    const code = generateResetCode();
+    storeResetCode(normalizedEmail, code);
+
+    try {
+      await sendResetCodeEmail(normalizedEmail, code);
+    } catch (error) {
+      console.error("Send reset code error:", error);
+      return res.status(500).json({ error: "Unable to send the reset code email. Please try again later." });
+    }
+
+    res.status(200).json({ message: "A 6-digit reset code has been sent to your email." });
+  } catch (err) {
+    console.error("Request reset code error:", err);
+    res.status(500).json({ error: "Server error. Please try again." });
+  }
+});
+
+// Verify reset code route
+app.post("/api/password/verify-reset-code", async (req, res) => {
+  const { email, code } = req.body;
+  const normalizedEmail = email?.trim();
+  const normalizedCode = String(code || "").trim();
+
+  if (!normalizedEmail || !isValidEmail(normalizedEmail) || !/^\d{6}$/.test(normalizedCode)) {
+    return res.status(400).json({ error: "A valid email and 6-digit code are required." });
+  }
+
+  const entry = passwordResetCodes.get(normalizedEmail);
+
+  if (!entry) {
+    return res.status(400).json({ error: "No reset code request found for that email." });
+  }
+
+  if (Date.now() > entry.expiresAt) {
+    cleanupResetCode(normalizedEmail);
+    return res.status(400).json({ error: "The reset code has expired. Please request a new one." });
+  }
+
+  if (entry.code !== normalizedCode) {
+    return res.status(400).json({ error: "The code entered is invalid. Please check your email." });
+  }
+
+  passwordResetCodes.delete(normalizedEmail);
+  verifiedResetEmails.add(normalizedEmail);
+
+  res.status(200).json({ message: "The code has been verified. You can now reset your password." });
+});
+
 // Reset password route
 app.post("/api/password/reset", async (req, res) => {
   const { email, newPassword } = req.body;
@@ -302,6 +429,10 @@ app.post("/api/password/reset", async (req, res) => {
 
   if (!normalizedEmail || !newPassword) {
     return res.status(400).json({ error: "Email and new password are required." });
+  }
+
+  if (!verifiedResetEmails.has(normalizedEmail)) {
+    return res.status(403).json({ error: "Please verify the reset code before changing your password." });
   }
 
   if (newPassword.length < 6) {
@@ -331,6 +462,9 @@ app.post("/api/password/reset", async (req, res) => {
       "UPDATE users SET password = ? WHERE id = ?",
       [hashedPassword, user.id]
     );
+
+    cleanupResetCode(normalizedEmail);
+    verifiedResetEmails.delete(normalizedEmail);
 
     res.status(200).json({ message: "Your password has been reset." });
   } catch (err) {

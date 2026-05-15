@@ -14,19 +14,45 @@ export default function ForgotPasswordPage({
   const [code, setCode] = useState("");
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   function isValidEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
 
-  function handleEmailNext() {
+  async function handleEmailNext() {
     if (!isValidEmail(email)) {
       setErrors({ email: "Please enter a valid email address." });
       return;
     }
 
     setErrors({});
-    setStep(2);
+    setMessage("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/password/request-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrors({ email: data.error || "Unable to send reset code. Please try again." });
+        return;
+      }
+
+      setStep(2);
+      setMessage(data.message || "A 6-digit code has been sent to your email.");
+    } catch (error) {
+      console.error("Request reset code failed:", error);
+      setErrors({ email: "Unable to send reset code. Please try again later." });
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleCodeChange(value) {
@@ -35,14 +61,38 @@ export default function ForgotPasswordPage({
     setErrors((prev) => ({ ...prev, code: "" }));
   }
 
-  function handleCodeNext() {
+  async function handleCodeNext() {
     if (code.length < 6) {
       setErrors({ code: "Please enter a 6-digit code." });
       return;
     }
 
     setErrors({});
-    onNext?.(email.trim());
+    setMessage("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/password/verify-reset-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), code }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrors({ code: data.error || "Invalid or expired code." });
+        return;
+      }
+
+      setMessage(data.message || "Code verified. You may reset your password.");
+      onNext?.(email.trim());
+    } catch (error) {
+      console.error("Verify reset code failed:", error);
+      setErrors({ code: "Unable to verify code. Please try again." });
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleKeyDown(event) {
@@ -110,6 +160,8 @@ export default function ForgotPasswordPage({
             </div>
           )}
 
+          {message && <div style={styles.successBox}>{message}</div>}
+
           <div style={styles.authActionRow}>
             <button style={styles.ghostBtn} type="button" onClick={onBackClick}>
               Back to login
@@ -118,8 +170,9 @@ export default function ForgotPasswordPage({
               style={styles.primaryBtn}
               type="button"
               onClick={step === 1 ? handleEmailNext : handleCodeNext}
+              disabled={loading}
             >
-              Next
+              {loading ? "Please wait..." : "Next"}
             </button>
           </div>
         </div>
