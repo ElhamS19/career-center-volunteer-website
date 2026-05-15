@@ -32,25 +32,84 @@ function cleanupResetCode(email) {
   verifiedResetEmails.delete(email);
 }
 
+function readEnv(name) {
+  const value = process.env[name];
+
+  if (typeof value !== "string") {
+    return "";
+  }
+
+  return value.trim();
+}
+
+function parseBooleanEnv(name, defaultValue = false) {
+  const value = readEnv(name).toLowerCase();
+
+  if (!value) {
+    return defaultValue;
+  }
+
+  return value === "true" || value === "1" || value === "yes";
+}
+
+function isGmailHost(host) {
+  return /(^|\.)gmail\.com$/i.test(host) || /^smtp\.gmail\.com$/i.test(host);
+}
+
+function classifyEmailError(error) {
+  const responseCode = Number(error?.responseCode || 0);
+  const code = String(error?.code || "").toUpperCase();
+  const command = String(error?.command || "").toUpperCase();
+
+  if (code === "EAUTH" || responseCode === 535 || command === "AUTH") {
+    return "SMTP authentication failed. Check Railway SMTP_USER and SMTP_PASS. For Gmail, SMTP_PASS must be a Google App Password.";
+  }
+
+  if (code === "ESOCKET" || code === "ECONNECTION" || code === "ETIMEDOUT") {
+    return "The app could not connect to the SMTP server. Check SMTP_HOST, SMTP_PORT, SMTP_SECURE, and whether your provider allows connections from Railway.";
+  }
+
+  if (responseCode === 553 || responseCode === 550 || code === "EENVELOPE") {
+    return "The SMTP server rejected the sender or recipient address. Make sure EMAIL_FROM is a valid address allowed by your mail provider.";
+  }
+
+  return "Unable to send the reset code email. Please try again later.";
+}
+
 function getEmailTransporter() {
-  const missingConfig = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS"].filter((key) => !process.env[key]);
+  const host = readEnv("SMTP_HOST");
+  const user = readEnv("SMTP_USER");
+  const pass = readEnv("SMTP_PASS");
+  const port = Number(readEnv("SMTP_PORT") || "587");
+  const secure = parseBooleanEnv("SMTP_SECURE", port === 465);
+  const service = readEnv("SMTP_SERVICE");
+  const missingConfig = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS"].filter((key) => !readEnv(key));
 
   if (missingConfig.length > 0) {
     throw new Error(`Missing email configuration: ${missingConfig.join(", ")}`);
   }
 
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || "587"),
-    secure: process.env.SMTP_SECURE === "true",
+  const transportConfig = {
+    host,
+    port,
+    secure,
     auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
+      user,
+      pass,
     },
-    connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT || "10000"),
-    greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT || "10000"),
-    socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT || "15000"),
-  });
+    requireTLS: parseBooleanEnv("SMTP_REQUIRE_TLS", !secure),
+    connectionTimeout: Number(readEnv("SMTP_CONNECTION_TIMEOUT") || "10000"),
+    greetingTimeout: Number(readEnv("SMTP_GREETING_TIMEOUT") || "10000"),
+    socketTimeout: Number(readEnv("SMTP_SOCKET_TIMEOUT") || "15000"),
+  };
+
+  if (service) {
+    transportConfig.service = service;
+  } else if (isGmailHost(host)) {
+    transportConfig.service = "gmail";
+  }
+
+  return nodemailer.createTransport(transportConfig);
 }
 
 async function sendResetCodeEmail(email, code) {
@@ -58,9 +117,12 @@ async function sendResetCodeEmail(email, code) {
   const subject = "Your Sac State Career Center Password Reset Code";
   const text = `Your password reset code is ${code}. Enter this code in the app to proceed.`;
   const html = `<p>Your password reset code is: <strong>${code}</strong>.</p><p>Enter this code to continue.</p>`;
+  const from = readEnv("EMAIL_FROM") || readEnv("SMTP_USER");
+
+  await transporter.verify();
 
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM?.trim() || process.env.SMTP_USER,
+    from,
     to: email,
     subject,
     text,
@@ -371,7 +433,7 @@ app.post("/api/password/request-reset", async (req, res) => {
       return res.status(500).json({
         error: missingConfig
           ? "Password reset email is not configured on the server."
-          : "Unable to send the reset code email. Please try again later.",
+          : classifyEmailError(error),
       });
     }
 
