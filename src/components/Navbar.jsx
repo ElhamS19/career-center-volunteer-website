@@ -1,5 +1,6 @@
 import Icon from "./Icon";
 import styles from "../styles";
+import Search from "./Search.jsx";
 
 export default function Navbar({
   onHomeClick,
@@ -9,7 +10,7 @@ export default function Navbar({
 }) {
   const showSignIn = !userAvatar && typeof onLoginClick === "function";
   const isLoggedIn = Boolean(userAvatar);
-
+  
   return (
     <header style={styles.navbar}>
       <div style={styles.brand} onClick={onHomeClick}>
@@ -25,9 +26,7 @@ export default function Navbar({
       </nav>
 
       <div style={styles.navIcons}>
-        <button style={styles.iconBtn} aria-label="Search" type="button">
-          <Icon name="search" />
-        </button>
+        <Search />
 
         {isLoggedIn && (
           <button style={styles.iconBtn} aria-label="Notifications" type="button">

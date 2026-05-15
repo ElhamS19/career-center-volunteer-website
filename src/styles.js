@@ -593,6 +593,31 @@ const styles = {
     justifyContent: "center",
     flexWrap: "wrap",
   },
+
+  searchWrapper: {
+    position: "absolute",
+    right: "625px",
+    display: "flex",
+    alignItems: "center",
+    overflow: "hidden",
+    transition: "all 0.3s ease",
+    backgroundColor: "#fff",
+    borderRadius: "30px",
+    padding: "4px 8px",
+    zIndex: 1000,
+  },
+
+  searchInput: {
+    border: "none",
+    outline: "none",
+    flex: 1,
+    width: "100%",
+    fontSize: "14px",
+    padding: "6px 10px",
+    background: "transparent",
+    color: "#000",
+  },
+
 };
 
 export default styles;
