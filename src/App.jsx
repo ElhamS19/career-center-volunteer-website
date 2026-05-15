@@ -19,13 +19,31 @@ styleTag.innerHTML = `
 `;
 document.head.appendChild(styleTag);
 
+function getInitials(fullName) {
+  if (!fullName) return "?";
+  const parts = fullName.trim().split(/\s+/);
+  const first = parts[0]?.[0] ?? "";
+  const last  = parts.length > 1 ? parts[parts.length - 1][0] : "";
+  return (first + last).toUpperCase() || "?";
+}
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [userAvatar, setUserAvatar] = useState("");
+  const [user, setUser] = useState(null);
 
-  function handleLoginSuccess() {
-    setUserAvatar("JH");
+  function handleLoginSuccess(userData) {
+    const fullName = userData?.fullName || `${userData?.firstName || ""} ${userData?.lastName || ""}`.trim();
+    setUser(userData);
+    setUserAvatar(getInitials(fullName));
     setCurrentPage("profile");
+  }
+
+  function handleProfileSave(updatedUser) {
+    const fullName = updatedUser?.fullName || `${updatedUser?.firstName || ""} ${updatedUser?.lastName || ""}`.trim();
+    setUser((prev) => ({ ...prev, ...updatedUser }));
+    setUserAvatar(getInitials(fullName));
+    setCurrentPage("saveSuccess");
   }
 
   function handleAvatarClick() {
@@ -35,6 +53,7 @@ export default function App() {
   }
 
   function handleLogout() {
+    setUser(null);
     setUserAvatar("");
     setCurrentPage("logoutSuccess");
   }
@@ -69,7 +88,9 @@ export default function App() {
       )}
       {currentPage === "profile" && (
         <ProfilePage
-          onSave={() => setCurrentPage("saveSuccess")}
+          key={user?.id || "profile"}
+          user={user}
+          onSave={handleProfileSave}
           onLogoutClick={handleLogout}
           onHomeClick={() => setCurrentPage("home")}
         />

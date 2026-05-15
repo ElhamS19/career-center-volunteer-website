@@ -11,17 +11,76 @@ function getInitials(fullName) {
   return (first + last).toUpperCase() || "?";
 }
 
-export default function ProfilePage({ onSave, onLogoutClick, onHomeClick }) {
+export default function ProfilePage({ user, onSave, onLogoutClick, onHomeClick }) {
+  const firstName = user?.firstName || "";
+  const lastName = user?.lastName || "";
+  const defaultFullName = user?.fullName || `${firstName} ${lastName}`.trim();
+
   const [profile, setProfile] = useState({
-    username: "JHarry916",
-    fullName: "John Harry",
-    email:    "johnharry@csus.edu",
-    phone:    "(916) 123-4567",
+    username: user?.username || `${firstName?.[0]?.toLowerCase() || ""}${lastName?.toLowerCase() || ""}`,
+    fullName: defaultFullName,
+    email: user?.email || "",
+    phone: user?.phone || "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   function handleChange(e) {
     const { name, value } = e.target;
     setProfile((prev) => ({ ...prev, [name]: value }));
+    setError("");
+    setSuccess("");
+  }
+
+  async function handleSave() {
+    setError("");
+    setSuccess("");
+
+    if (!profile.username.trim()) {
+      setError("Username is required.");
+      return;
+    }
+    if (!profile.fullName.trim()) {
+      setError("Full name is required.");
+      return;
+    }
+    if (!profile.email.trim()) {
+      setError("Email is required.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: user?.id,
+          username: profile.username.trim(),
+          email: profile.email.trim(),
+          fullName: profile.fullName.trim(),
+          phone: profile.phone.trim(),
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Failed to save profile.");
+        setLoading(false);
+        return;
+      }
+
+      setSuccess("Profile saved successfully!");
+      setLoading(false);
+      setTimeout(() => onSave(data.user), 600);
+    } catch {
+      setLoading(false);
+      setError("Could not connect to server. Make sure it is running.");
+    }
   }
 
   const initials = getInitials(profile.fullName);
@@ -43,6 +102,8 @@ export default function ProfilePage({ onSave, onLogoutClick, onHomeClick }) {
           </div>
 
           <h2 style={styles.sectionLabel}>Account details</h2>
+          {error && <p style={{ color: "#C2410C", marginBottom: "12px", fontSize: "14px" }}>{error}</p>}
+          {success && <p style={{ color: "#0A6E48", marginBottom: "12px", fontSize: "14px" }}>{success}</p>}
           <div style={styles.formGrid}>
             <div>
               <label style={styles.label}>Username</label>
@@ -52,6 +113,7 @@ export default function ProfilePage({ onSave, onLogoutClick, onHomeClick }) {
                 value={profile.username}
                 onChange={handleChange}
                 style={styles.input}
+                disabled={loading}
               />
             </div>
             <div>
@@ -62,6 +124,7 @@ export default function ProfilePage({ onSave, onLogoutClick, onHomeClick }) {
                 value={profile.fullName}
                 onChange={handleChange}
                 style={styles.input}
+                disabled={loading}
               />
             </div>
             <div>
@@ -72,6 +135,7 @@ export default function ProfilePage({ onSave, onLogoutClick, onHomeClick }) {
                 value={profile.email}
                 onChange={handleChange}
                 style={styles.input}
+                disabled={loading}
               />
             </div>
             <div>
@@ -82,6 +146,7 @@ export default function ProfilePage({ onSave, onLogoutClick, onHomeClick }) {
                 value={profile.phone}
                 onChange={handleChange}
                 style={styles.input}
+                disabled={loading}
               />
             </div>
           </div>
@@ -99,15 +164,16 @@ export default function ProfilePage({ onSave, onLogoutClick, onHomeClick }) {
               style={styles.dangerGhostBtn}
               type="button"
               onClick={onLogoutClick}
+              disabled={loading}
             >
               <Icon name="logout" size={14} /> Log out
             </button>
             <div style={styles.profileFooterRight}>
-              <button style={styles.ghostBtn} type="button" onClick={onHomeClick}>
+              <button style={styles.ghostBtn} type="button" onClick={onHomeClick} disabled={loading}>
                 Cancel
               </button>
-              <button style={styles.primaryBtn} type="button" onClick={onSave}>
-                Save changes
+              <button style={styles.primaryBtn} type="button" onClick={handleSave} disabled={loading}>
+                {loading ? "Saving..." : "Save changes"}
               </button>
             </div>
           </div>

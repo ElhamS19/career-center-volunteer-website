@@ -85,6 +85,8 @@ export default function SignUpPage({ onHomeClick, onLoginClick, userAvatar, onAv
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
           full_name: `${firstName.trim()} ${lastName.trim()}`,
           email,
           password,
@@ -102,7 +104,7 @@ export default function SignUpPage({ onHomeClick, onLoginClick, userAvatar, onAv
       setLoading(false);
       setSuccess(true);
 
-    } catch (err) {
+    } catch {
       setLoading(false);
       setServerError("Could not connect to server. Make sure it is running.");
     }
