@@ -17,6 +17,8 @@ export default function ProfilePage({
   onChangePasswordClick,
   onLogoutClick,
   onHomeClick,
+  onEventsClick,
+  onLoginClick,
   onHelpClick,
 }) {
   const firstName = user?.firstName || "";
@@ -94,7 +96,7 @@ export default function ProfilePage({
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} onHelpClick={onHelpClick} userAvatar={initials} />
+      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onLoginClick={onLoginClick} onHelpClick={onHelpClick} userAvatar={initials} />
 
       <div style={styles.profileBody}>
         <div style={styles.profileContainer}>

@@ -14,6 +14,8 @@ export default function PasswordChangePage({
   onSubmit,
   onBackClick,
   onHomeClick,
+  onEventsClick,
+  onLoginClick,
   onHelpClick,
   userAvatar,
   onAvatarClick,
@@ -129,6 +131,8 @@ export default function PasswordChangePage({
     <div style={styles.page}>
       <Navbar
         onHomeClick={onHomeClick}
+        onEventsClick={onEventsClick}
+        onLoginClick={onLoginClick}
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}
         onAvatarClick={onAvatarClick}

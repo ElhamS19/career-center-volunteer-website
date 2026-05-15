@@ -9,7 +9,7 @@ const events = [
   { month: "May", day: "06", title: "Employer on Campus", time: "10:00 am - 2:00 pm", location: "University Union" },
 ];
 
-export default function Home({ onHomeClick, onLoginClick, onSignupClick, onHelpClick, userAvatar, onAvatarClick }) {
+export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEventsClick, onHelpClick, userAvatar, onAvatarClick }) {
   function scrollToEvents() {
     const el = document.getElementById("upcoming-events");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -17,7 +17,7 @@ export default function Home({ onHomeClick, onLoginClick, onSignupClick, onHelpC
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} onLoginClick={onLoginClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
+      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onLoginClick={onLoginClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <section style={styles.hero}>
         <span style={styles.pill}>Sacramento State</span>
@@ -41,7 +41,10 @@ export default function Home({ onHomeClick, onLoginClick, onSignupClick, onHelpC
       <section id="upcoming-events" style={styles.section}>
         <div style={styles.sectionHeader}>
           <h2 style={styles.sectionTitle}>Upcoming events</h2>
-          <span style={styles.sectionLink}>
+          <span
+            style={{ ...styles.sectionLink, cursor: "pointer" }}
+            onClick={onEventsClick}
+          >
             View all <Icon name="arrowRight" size={13} />
           </span>
         </div>
