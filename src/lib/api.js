@@ -1,11 +1,7 @@
 const PRODUCTION_API_BASE_URL = "https://career-center-volunteer-website-production.up.railway.app";
 
-const rawConfiguredBaseUrl = import.meta.env.VITE_API_BASE_URL;
-const hasConfiguredBaseUrl = typeof rawConfiguredBaseUrl === "string";
-const configuredBaseUrl = hasConfiguredBaseUrl ? rawConfiguredBaseUrl.trim() : "";
-const API_BASE_URL = (
-  hasConfiguredBaseUrl ? configuredBaseUrl : (import.meta.env.DEV ? "" : PRODUCTION_API_BASE_URL)
-).replace(/\/$/, "");
+const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const API_BASE_URL = (configuredBaseUrl || (import.meta.env.DEV ? "" : PRODUCTION_API_BASE_URL)).replace(/\/$/, "");
 const DEFAULT_TIMEOUT_MS = Number(import.meta.env.VITE_API_TIMEOUT_MS || "15000");
 
 function buildApiUrl(path) {
