@@ -92,7 +92,7 @@ export default function App() {
       throw new Error("You need to be signed in to change your password.");
     }
 
-    const response = await fetch("http://localhost:5000/api/password/change", {
+    const response = await fetch("http://https://career-center-volunteer-website-production.up.railway.app/api/password/change", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -116,7 +116,7 @@ export default function App() {
       throw new Error("Missing reset email.");
     }
 
-    const response = await fetch("http://localhost:5000/api/password/reset", {
+    const response = await fetch("http://https://career-center-volunteer-website-production.up.railway.app/api/password/reset", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

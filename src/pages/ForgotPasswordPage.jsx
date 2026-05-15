@@ -35,7 +35,7 @@ export default function ForgotPasswordPage({
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/password/request-reset", {
+      const response = await fetch("http://https://career-center-volunteer-website-production.up.railway.app/api/password/request-reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
@@ -75,7 +75,7 @@ export default function ForgotPasswordPage({
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/password/verify-reset-code", {
+      const response = await fetch("http://https://career-center-volunteer-website-production.up.railway.app/api/password/verify-reset-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), code }),
