@@ -651,7 +651,6 @@ const styles = {
   },
 
   searchWrapper: {
-    position: "absolute",
     right: "625px",
     display: "flex",
     alignItems: "center",
