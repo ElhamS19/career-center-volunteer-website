@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Icon from "../components/Icon";
+import { fetchJson } from "../lib/api";
 import styles from "../styles";
 
 function getInitials(fullName) {
@@ -65,7 +66,7 @@ export default function ProfilePage({
     setLoading(true);
 
     try {
-      const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/profile", {
+      const { response, data } = await fetchJson("/api/profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -77,8 +78,6 @@ export default function ProfilePage({
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
         setError(data.error || "Failed to save profile.");
         setLoading(false);
@@ -88,9 +87,9 @@ export default function ProfilePage({
       setSuccess("Profile saved successfully!");
       setLoading(false);
       setTimeout(() => onSave(data.user), 600);
-    } catch {
+    } catch (error) {
       setLoading(false);
-      setError("Could not connect to server. Make sure it is running.");
+      setError(error.message || "Could not connect to server. Make sure it is running.");
     }
   }
 

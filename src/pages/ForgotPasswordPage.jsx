@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
+import { fetchJson } from "../lib/api";
 import styles from "../styles";
 
 export default function ForgotPasswordPage({
@@ -35,13 +36,11 @@ export default function ForgotPasswordPage({
     setLoading(true);
 
     try {
-      const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/password/request-reset", {
+      const { response, data } = await fetchJson("/api/password/request-reset", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
       });
-
-      const data = await response.json();
 
       if (!response.ok) {
         setErrors({ email: data.error || "Unable to send reset code. Please try again." });
@@ -52,7 +51,7 @@ export default function ForgotPasswordPage({
       setMessage(data.message || "A 6-digit code has been sent to your email.");
     } catch (error) {
       console.error("Request reset code failed:", error);
-      setErrors({ email: "Unable to send reset code. Please try again later." });
+      setErrors({ email: error.message || "Unable to send reset code. Please try again later." });
     } finally {
       setLoading(false);
     }
@@ -75,13 +74,11 @@ export default function ForgotPasswordPage({
     setLoading(true);
 
     try {
-      const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/password/verify-reset-code", {
+      const { response, data } = await fetchJson("/api/password/verify-reset-code", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim(), code }),
       });
-
-      const data = await response.json();
 
       if (!response.ok) {
         setErrors({ code: data.error || "Invalid or expired code." });
@@ -92,7 +89,7 @@ export default function ForgotPasswordPage({
       onNext?.(email.trim());
     } catch (error) {
       console.error("Verify reset code failed:", error);
-      setErrors({ code: "Unable to verify code. Please try again." });
+      setErrors({ code: error.message || "Unable to verify code. Please try again." });
     } finally {
       setLoading(false);
     }

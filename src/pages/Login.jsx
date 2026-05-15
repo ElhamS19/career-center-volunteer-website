@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
+import { fetchJson } from "../lib/api";
 import styles from "../styles";
 
 export default function Login({
@@ -39,13 +40,11 @@ export default function Login({
     setLoading(true);
 
     try {
-      const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/login", {
+      const { response, data } = await fetchJson("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
-      const data = await response.json();
 
       if (!response.ok) {
         setServerError(data.error);
@@ -60,9 +59,9 @@ export default function Login({
         setTimeout(() => onLoginSuccess(data.user), 400);
       }
 
-    } catch {
+    } catch (error) {
       setLoading(false);
-      setServerError("Could not connect to server.");
+      setServerError(error.message || "Could not connect to server.");
     }
   }
 

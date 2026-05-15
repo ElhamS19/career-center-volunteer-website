@@ -1,7 +1,6 @@
 /* global process */
 import "dotenv/config";
 import express from "express";
-import mysql from "mysql2/promise";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
@@ -34,8 +33,10 @@ function cleanupResetCode(email) {
 }
 
 function getEmailTransporter() {
-  if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    return null;
+  const missingConfig = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS"].filter((key) => !process.env[key]);
+
+  if (missingConfig.length > 0) {
+    throw new Error(`Missing email configuration: ${missingConfig.join(", ")}`);
   }
 
   return nodemailer.createTransport({
@@ -46,22 +47,20 @@ function getEmailTransporter() {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
+    connectionTimeout: Number(process.env.SMTP_CONNECTION_TIMEOUT || "10000"),
+    greetingTimeout: Number(process.env.SMTP_GREETING_TIMEOUT || "10000"),
+    socketTimeout: Number(process.env.SMTP_SOCKET_TIMEOUT || "15000"),
   });
 }
 
 async function sendResetCodeEmail(email, code) {
   const transporter = getEmailTransporter();
-  const subject = "Your Sac State Career Center password reset code";
+  const subject = "Your Sac State Career Center Password Reset Code";
   const text = `Your password reset code is ${code}. Enter this code in the app to proceed.`;
-  const html = `<p>Your password reset code is <strong>${code}</strong>.</p><p>Enter this code in the app to continue.</p>`;
-
-  if (!transporter) {
-    console.log(`Password reset code for ${email}: ${code}`);
-    return;
-  }
+  const html = `<p>Your password reset code is: <strong>${code}</strong>.</p><p>Enter this code to continue.</p>`;
 
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM || process.env.SMTP_USER,
+    from: process.env.EMAIL_FROM?.trim() || process.env.SMTP_USER,
     to: email,
     subject,
     text,
@@ -368,7 +367,12 @@ app.post("/api/password/request-reset", async (req, res) => {
       await sendResetCodeEmail(normalizedEmail, code);
     } catch (error) {
       console.error("Send reset code error:", error);
-      return res.status(500).json({ error: "Unable to send the reset code email. Please try again later." });
+      const missingConfig = error.message?.startsWith("Missing email configuration");
+      return res.status(500).json({
+        error: missingConfig
+          ? "Password reset email is not configured on the server."
+          : "Unable to send the reset code email. Please try again later.",
+      });
     }
 
     res.status(200).json({ message: "A 6-digit reset code has been sent to your email." });

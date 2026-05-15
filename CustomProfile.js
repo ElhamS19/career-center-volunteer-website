@@ -16,17 +16,17 @@ function saveChanges() {
     nameField.value = nameTop;
 
     showNotification("Changes have been saved");
+    setTimeout(() => {
+        window.location.href = "SUCCESSpage.html";
+    }, 2500);
 }
 
 function logout() {
     showNotification("Successfully logged out");
+    setTimeout(() => {
+        window.location.href = "LOGOUTpage.html";
+    }, 2500);
 }
 
-function saveChanges() {
-    // (Optional: store data here if needed)
-    window.location.href = "success.html";
-}
-
-function logout() {
-    window.location.href = "logout.html";
-}
+window.saveChanges = saveChanges;
+window.logout = logout;

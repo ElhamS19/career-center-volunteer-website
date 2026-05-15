@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { fetchJson } from "./lib/api";
 import styles from "./styles";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -90,7 +91,7 @@ export default function App() {
       throw new Error("You need to be signed in to change your password.");
     }
 
-    const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/password/change", {
+    const { response, data } = await fetchJson("/api/password/change", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -99,8 +100,6 @@ export default function App() {
         newPassword,
       }),
     });
-
-    const data = await response.json();
 
     if (!response.ok) {
       throw new Error(data.error || "Failed to update password.");
@@ -114,7 +113,7 @@ export default function App() {
       throw new Error("Missing reset email.");
     }
 
-    const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/password/reset", {
+    const { response, data } = await fetchJson("/api/password/reset", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -122,8 +121,6 @@ export default function App() {
         newPassword,
       }),
     });
-
-    const data = await response.json();
 
     if (!response.ok) {
       throw new Error(data.error || "Failed to reset password.");

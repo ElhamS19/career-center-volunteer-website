@@ -17,7 +17,6 @@ export default function PasswordChangePage({
   onEventsClick,
   onCalendarClick,
   onLoginClick,
-  onAboutClick,
   onHelpClick,
   userAvatar,
   onAvatarClick,

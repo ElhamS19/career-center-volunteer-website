@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
+import { fetchJson } from "../lib/api";
 import styles from "../styles";
 
 // Password strength checker
@@ -81,7 +82,7 @@ export default function SignUpPage({ onHomeClick, onEventsClick, onCalendarClick
     setLoading(true);
 
     try {
-      const response = await fetch("https://career-center-volunteer-website-production.up.railway.app/api/signup", {
+      const { response, data } = await fetchJson("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -93,8 +94,6 @@ export default function SignUpPage({ onHomeClick, onEventsClick, onCalendarClick
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
         setServerError(data.error);
         setLoading(false);
@@ -104,9 +103,9 @@ export default function SignUpPage({ onHomeClick, onEventsClick, onCalendarClick
       setLoading(false);
       setSuccess(true);
 
-    } catch {
+    } catch (error) {
       setLoading(false);
-      setServerError("Could not connect to server. Make sure it is running.");
+      setServerError(error.message || "Could not connect to server. Make sure it is running.");
     }
   }
 
