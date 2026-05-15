@@ -103,7 +103,7 @@ export default function ProfilePage({
             <div>
               <h1 style={styles.profileName}>{profile.fullName || "Your name"}</h1>
               <p style={styles.profileMeta}>
-                @{profile.username} · Volunteer since 2024
+                @{profile.username} · Volunteer since 2026
               </p>
             </div>
           </div>
