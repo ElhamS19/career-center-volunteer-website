@@ -2,102 +2,66 @@ import Icon from "./Icon";
 import styles from "../styles";
 import Search from "./Search";
 
+/* inject mobile styles once */
+if (!document.head.querySelector("[data-navbar-mobile]")) {
+  const tag = document.createElement("style");
+  tag.setAttribute("data-navbar-mobile", "1");
+  tag.innerHTML = `
+    @media (max-width: 640px) {
+      .navbar-links { display: none !important; }
+      .navbar-brand-text { display: none !important; }
+      .navbar-signin { font-size: 12px !important; padding: 6px 10px !important; }
+    }
+  `;
+  document.head.appendChild(tag);
+}
+
 export default function Navbar({
-  onHomeClick,
-  onEventsClick,
-  onCalendarClick,
-  onAboutClick,
-  onLoginClick,
-  onHelpClick,
-  userAvatar,
-  onAvatarClick,
-  onLogoutClick,
+  onHomeClick, onEventsClick, onCalendarClick, onAboutClick,
+  onLoginClick, onHelpClick, userAvatar, onAvatarClick, onLogoutClick,
 }) {
   const showSignIn = !userAvatar && typeof onLoginClick === "function";
   const isLoggedIn = Boolean(userAvatar);
   const showLogout = isLoggedIn && typeof onLogoutClick === "function";
-  
+
   return (
     <header style={styles.navbar}>
       <div style={styles.brand} onClick={onHomeClick}>
         <span style={styles.brandLogo}>S</span>
-        <span>Career Center Volunteer</span>
+        <span className="navbar-brand-text">Career Center Volunteer</span>
       </div>
 
-      <nav style={styles.navLinks}>
-        <span
-          style={{
-            ...styles.navLink,
-            cursor: onEventsClick ? "pointer" : "default",
-          }}
-          onClick={onEventsClick}
-        >
-          Events
-        </span>
-        <span
-          style={{
-            ...styles.navLink,
-            cursor: onCalendarClick ? "pointer" : "default",
-          }}
-          onClick={onCalendarClick}
-        >
-          Calendar
-        </span>
-        <span
-          style={{
-            ...styles.navLink,
-            cursor: onAboutClick ? "pointer" : "default",
-          }}
-          onClick={onAboutClick}
-        >
-          About
-        </span>
-        <span
-          style={{
-            ...styles.navLink,
-            cursor: onHelpClick ? "pointer" : "default",
-          }}
-          onClick={onHelpClick}
-        >
-          Help
-        </span>
+      <nav style={styles.navLinks} className="navbar-links">
+        <span style={{ ...styles.navLink, cursor: onEventsClick ? "pointer" : "default" }} onClick={onEventsClick}>Events</span>
+        <span style={{ ...styles.navLink, cursor: onCalendarClick ? "pointer" : "default" }} onClick={onCalendarClick}>Calendar</span>
+        <span style={{ ...styles.navLink, cursor: onAboutClick ? "pointer" : "default" }} onClick={onAboutClick}>About</span>
+        <span style={{ ...styles.navLink, cursor: onHelpClick ? "pointer" : "default" }} onClick={onHelpClick}>Help</span>
       </nav>
 
       <div style={styles.navIcons}>
         <Search onEventsClick={onEventsClick} />
-
         {isLoggedIn && (
           <button style={styles.iconBtn} aria-label="Notifications" type="button">
             <Icon name="bell" />
           </button>
         )}
-
         {isLoggedIn && (
           <div
             style={{ ...styles.avatarSmall, cursor: "pointer" }}
-            aria-label="Your profile"
-            role="button"
-            tabIndex={0}
+            aria-label="Your profile" role="button" tabIndex={0}
             onClick={onAvatarClick}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                onAvatarClick?.();
-              }
-            }}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onAvatarClick?.(); }}
           >
             {userAvatar}
           </div>
         )}
-
         {showLogout && (
           <button style={styles.navLogoutBtn} onClick={onLogoutClick} type="button">
-            <Icon name="logout" size={14} />
-            Log out
+            <Icon name="logout" size={14} /> Log out
           </button>
         )}
-
         {showSignIn && (
-          <button style={styles.signInBtn} onClick={onLoginClick} type="button">
+          <button className="navbar-signin" style={styles.signInBtn} onClick={onLoginClick} type="button">
             Sign in
           </button>
         )}
