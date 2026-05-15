@@ -160,11 +160,8 @@ export default function PasswordChangePage({
             <>
               <div style={styles.successBox}>{successMessage}</div>
               <div style={styles.authActionRow}>
-                <button style={styles.primaryBtn} type="button" onClick={onBackClick}>
+                <button style={styles.primaryBtn} type="button" onClick={onLoginClick}>
                   {backLabel}
-                </button>
-                <button style={styles.ghostBtn} type="button" onClick={onHomeClick}>
-                  Return home
                 </button>
               </div>
             </>
