@@ -11,9 +11,11 @@ export default function Navbar({
   onHelpClick,
   userAvatar,
   onAvatarClick,
+  onLogoutClick,
 }) {
   const showSignIn = !userAvatar && typeof onLoginClick === "function";
   const isLoggedIn = Boolean(userAvatar);
+  const showLogout = isLoggedIn && typeof onLogoutClick === "function";
   
   return (
     <header style={styles.navbar}>
@@ -85,6 +87,13 @@ export default function Navbar({
           >
             {userAvatar}
           </div>
+        )}
+
+        {showLogout && (
+          <button style={styles.navLogoutBtn} onClick={onLogoutClick} type="button">
+            <Icon name="logout" size={14} />
+            Log out
+          </button>
         )}
 
         {showSignIn && (

@@ -11,6 +11,7 @@ export default function About({
   onLoginClick,
   userAvatar,
   onAvatarClick,
+  onLogoutClick,
 }) {
   return (
     <div style={styles.page}>
@@ -23,6 +24,7 @@ export default function About({
         onLoginClick={onLoginClick}
         userAvatar={userAvatar}
         onAvatarClick={onAvatarClick}
+        onLogoutClick={onLogoutClick}
       />
 
       <main style={styles.aboutBody}>
@@ -54,7 +56,7 @@ export default function About({
 
               <div style={styles.aboutContactRow}>
                 <span style={styles.aboutContactLabel}>Phone:</span>
-                <span style={styles.aboutContactValue}>xxx - xxx - xxxx</span>
+                <span style={styles.aboutContactValue}>(916) 278-6787</span>
               </div>
             </div>
           </div>

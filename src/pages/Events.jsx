@@ -12,6 +12,7 @@ export default function Events({
   onHelpClick,
   userAvatar,
   onAvatarClick,
+  onLogoutClick,
   isLoggedIn,
   registeredEventIds,
   onToggleEventRegistration,
@@ -27,6 +28,7 @@ export default function Events({
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}
         onAvatarClick={onAvatarClick}
+        onLogoutClick={onLogoutClick}
       />
 
       <section style={styles.hero}>

@@ -2,10 +2,10 @@ import Navbar from "../components/Navbar";
 import Icon from "../components/Icon";
 import styles from "../styles";
 
-export default function SaveSuccessPage({ onHomeClick, onEventsClick, onCalendarClick, onLoginClick, onAboutClick, onHelpClick, userAvatar, onAvatarClick }) {
+export default function SaveSuccessPage({ onHomeClick, onEventsClick, onCalendarClick, onLoginClick, onAboutClick, onHelpClick, userAvatar, onAvatarClick, onLogoutClick }) {
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onLoginClick={onLoginClick} onAboutClick={onAboutClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
+      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onLoginClick={onLoginClick} onAboutClick={onAboutClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} onLogoutClick={onLogoutClick} />
 
       <div style={styles.confirmContainer}>
         <div style={styles.confirmIcon}>

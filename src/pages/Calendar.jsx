@@ -21,6 +21,7 @@ export default function Calendar({
   onHelpClick,
   userAvatar,
   onAvatarClick,
+  onLogoutClick,
   isLoggedIn,
   registeredEventIds,
   onToggleEventRegistration,
@@ -47,6 +48,7 @@ export default function Calendar({
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}
         onAvatarClick={onAvatarClick}
+        onLogoutClick={onLogoutClick}
       />
 
       <section style={styles.hero}>

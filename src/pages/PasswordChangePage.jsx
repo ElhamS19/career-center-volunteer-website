@@ -21,6 +21,7 @@ export default function PasswordChangePage({
   onHelpClick,
   userAvatar,
   onAvatarClick,
+  onLogoutClick,
 }) {
   const isAccountMode = mode === "account";
   const [form, setForm] = useState(emptyForm);
@@ -139,6 +140,7 @@ export default function PasswordChangePage({
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}
         onAvatarClick={onAvatarClick}
+        onLogoutClick={onLogoutClick}
       />
 
       <div style={styles.authBody}>

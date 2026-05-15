@@ -4,7 +4,7 @@ import Icon from "../components/Icon";
 import styles from "../styles";
 import { featuredEvents } from "../data/events";
 
-export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEventsClick, onCalendarClick, onAboutClick, onHelpClick, userAvatar, onAvatarClick, isLoggedIn, registeredEventIds, onToggleEventRegistration }) {
+export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEventsClick, onCalendarClick, onAboutClick, onHelpClick, userAvatar, onAvatarClick, onLogoutClick, isLoggedIn, registeredEventIds, onToggleEventRegistration }) {
   function scrollToEvents() {
     const el = document.getElementById("upcoming-events");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -12,7 +12,7 @@ export default function Home({ onHomeClick, onLoginClick, onSignupClick, onEvent
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onLoginClick={onLoginClick} onAboutClick={onAboutClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
+      <Navbar onHomeClick={onHomeClick} onEventsClick={onEventsClick} onCalendarClick={onCalendarClick} onLoginClick={onLoginClick} onAboutClick={onAboutClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} onLogoutClick={onLogoutClick} />
 
       <section style={styles.hero}>
         <span style={styles.pill}>Sacramento State</span>

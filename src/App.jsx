@@ -147,6 +147,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
           isLoggedIn={isLoggedIn}
           registeredEventIds={registeredEventIds}
           onToggleEventRegistration={handleToggleEventRegistration}
@@ -162,6 +163,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
           isLoggedIn={isLoggedIn}
           registeredEventIds={registeredEventIds}
           onToggleEventRegistration={handleToggleEventRegistration}
@@ -177,6 +179,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
           isLoggedIn={isLoggedIn}
           registeredEventIds={registeredEventIds}
           onToggleEventRegistration={handleToggleEventRegistration}
@@ -194,6 +197,7 @@ export default function App() {
           onLoginSuccess={handleLoginSuccess}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
         />
       )}
       {currentPage === "forgotPassword" && (
@@ -207,6 +211,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
         />
       )}
       {currentPage === "signup" && (
@@ -219,6 +224,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
         />
       )}
       {currentPage === "profile" && (
@@ -251,6 +257,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
         />
       )}
       {currentPage === "saveSuccess" && (
@@ -263,6 +270,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
         />
       )}
       {currentPage === "logoutSuccess" && (
@@ -275,6 +283,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
         />
       )}
       {currentPage === "help" && (
@@ -287,6 +296,7 @@ export default function App() {
           onAboutClick={() => setCurrentPage("about")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
         />
       )}
       {currentPage === "about" && (
@@ -299,6 +309,7 @@ export default function App() {
           onLoginClick={() => setCurrentPage("login")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
+          onLogoutClick={handleLogout}
         />
       )}
     </div>
