@@ -5,6 +5,7 @@ import Search from "./Search.jsx";
 export default function Navbar({
   onHomeClick,
   onEventsClick,
+  onCalendarClick,
   onLoginClick,
   onHelpClick,
   userAvatar,
@@ -30,7 +31,15 @@ export default function Navbar({
         >
           Events
         </span>
-        <span style={styles.navLink}>Calendar</span>
+        <span
+          style={{
+            ...styles.navLink,
+            cursor: onCalendarClick ? "pointer" : "default",
+          }}
+          onClick={onCalendarClick}
+        >
+          Calendar
+        </span>
         <span style={styles.navLink}>About</span>
         <span
           style={{
