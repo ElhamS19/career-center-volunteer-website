@@ -1,6 +1,6 @@
 import Icon from "./Icon";
 import styles from "../styles";
-import Search from "./Search.jsx";
+import Search from "./Search";
 
 export default function Navbar({
   onHomeClick,
@@ -64,7 +64,7 @@ export default function Navbar({
       </nav>
 
       <div style={styles.navIcons}>
-        <Search />
+        <Search onEventsClick={onEventsClick} />
 
         {isLoggedIn && (
           <button style={styles.iconBtn} aria-label="Notifications" type="button">

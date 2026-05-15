@@ -850,7 +850,6 @@ const styles = {
   },
 
   searchWrapper: {
-    right: "625px",
     display: "flex",
     alignItems: "center",
     overflow: "hidden",
@@ -859,7 +858,7 @@ const styles = {
     borderRadius: "30px",
     padding: "4px 8px",
     zIndex: 1000,
-  },
+},
 
   searchInput: {
     border: "none",
@@ -871,6 +870,31 @@ const styles = {
     background: "transparent",
     color: "#000",
   },
+
+  searchResults: {
+  position: "absolute",
+  top: "50px",
+  left: 0,
+  width: "220px",
+  backgroundColor: "#fff",
+  borderRadius: "10px",
+  boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
+  overflow: "hidden",
+  zIndex: 2000,
+},
+
+searchResultItem: {
+  padding: "10px",
+  cursor: "pointer",
+  borderBottom: "1px solid #eee",
+  color: "#000",
+},
+
+searchNoResults: {
+  padding: "10px",
+  color: "#777",
+},
+  
 
 };
 
