@@ -48,6 +48,7 @@ export default function Calendar({
         onHomeClick={onHomeClick}
         onEventsClick={onEventsClick}
         onCalendarClick={onCalendarClick}
+        onLoginClick={onLoginClick}
         onHelpClick={onHelpClick}
         userAvatar={userAvatar}
         onAvatarClick={onAvatarClick}
