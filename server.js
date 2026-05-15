@@ -5,41 +5,39 @@ import mysql from "mysql2/promise";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
-import { readFileSync } from "fs";
-import { resolve } from "path";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
- 
+
 const passwordResetCodes = new Map();
 const verifiedResetEmails = new Set();
- 
+
 function generateResetCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
- 
+
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
- 
+
 function storeResetCode(email, code) {
   passwordResetCodes.set(email, {
     code,
     expiresAt: Date.now() + 10 * 60 * 1000,
   });
 }
- 
+
 function cleanupResetCode(email) {
   passwordResetCodes.delete(email);
   verifiedResetEmails.delete(email);
 }
- 
+
 function getEmailTransporter() {
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
     return null;
   }
- 
+
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || "587"),
@@ -50,18 +48,18 @@ function getEmailTransporter() {
     },
   });
 }
- 
+
 async function sendResetCodeEmail(email, code) {
   const transporter = getEmailTransporter();
   const subject = "Your Sac State Career Center password reset code";
   const text = `Your password reset code is ${code}. Enter this code in the app to proceed.`;
   const html = `<p>Your password reset code is <strong>${code}</strong>.</p><p>Enter this code in the app to continue.</p>`;
- 
+
   if (!transporter) {
     console.log(`Password reset code for ${email}: ${code}`);
     return;
   }
- 
+
   await transporter.sendMail({
     from: process.env.EMAIL_FROM || process.env.SMTP_USER,
     to: email,
@@ -70,7 +68,7 @@ async function sendResetCodeEmail(email, code) {
     html,
   });
 }
- 
+
 function splitFullName(name) {
   if (!name) return { firstName: "", lastName: "" };
   const parts = name.trim().split(/\s+/);
@@ -137,23 +135,17 @@ function buildUpdateStatement(tableName, data, whereClause, whereValues = []) {
   };
 }
 
-// database connection
-const ca = readFileSync(resolve("ca.pem"));
- 
+// database connection — Railway (no SSL required)
 const db = await mysql.createConnection({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  ssl: {
-    ca,
-    rejectUnauthorized: false,
-  },
 });
- 
-console.log("✅ Connected to Aiven MySQL!");
- 
+
+console.log("✅ Connected to Railway MySQL!");
+
 // Signup route
 app.post("/api/signup", async (req, res) => {
   const { firstName: rawFirstName, lastName: rawLastName, email, password, full_name } = req.body;
@@ -196,36 +188,37 @@ app.post("/api/signup", async (req, res) => {
     res.status(500).json({ error: "Server error. Please try again." });
   }
 });
- // Login route
+
+// Login route
 app.post("/api/login", async (req, res) => {
   const { email, password } = req.body;
- 
+
   if (!email || !password) {
     return res.status(400).json({ error: "All fields are required." });
   }
- 
+
   try {
     const [rows] = await db.execute(
       "SELECT * FROM users WHERE email = ?",
       [email]
     );
- 
+
     if (rows.length === 0) {
       return res.status(401).json({ error: "No account found with that email." });
     }
- 
+
     const user = rows[0];
     const match = await bcrypt.compare(password, user.password);
- 
+
     if (!match) {
       return res.status(401).json({ error: "Incorrect password." });
     }
- 
+
     res.status(200).json({
       message: "Login successful!",
       user: buildUserResponse(user),
     });
- 
+
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Server error. Please try again." });
@@ -472,7 +465,7 @@ app.post("/api/password/reset", async (req, res) => {
     res.status(500).json({ error: "Server error. Please try again." });
   }
 });
- 
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
