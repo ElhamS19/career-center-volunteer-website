@@ -4,7 +4,6 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import SignUpPage from "./pages/SignUpPage";
 import ProfilePage from "./pages/ProfilePage";
-import SaveSuccessPage from "./pages/SaveSuccessPage";
 import LogoutSuccessPage from "./pages/LogoutSuccessPage";
 
 /* key frame for fade in animation */
@@ -48,13 +47,10 @@ export default function App() {
       {/* --- Your Pages Integrated Here --- */}
       {currentPage === "profile" && (
         <ProfilePage 
-          onSave={() => setCurrentPage("saved")} 
+          onSave={() => setCurrentPage("profile")} 
           onLogoutClick={() => setCurrentPage("logout")} 
           onHomeClick={() => setCurrentPage("home")}
         />
-      )}
-      {currentPage === "saved" && (
-        <SaveSuccessPage onHomeClick={() => setCurrentPage("home")} />
       )}
       {currentPage === "logout" && (
         <LogoutSuccessPage onLoginClick={() => setCurrentPage("login")} />
