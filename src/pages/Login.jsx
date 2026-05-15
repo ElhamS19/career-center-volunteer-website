@@ -2,7 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import styles from "../styles";
 
-export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, userAvatar, onAvatarClick }) {
+export default function Login({ onHomeClick, onSignUpClick, onHelpClick, onLoginSuccess, userAvatar, onAvatarClick }) {
   const [email, setEmail]           = useState("");
   const [password, setPassword]     = useState("");
   const [remember, setRemember]     = useState(true);
@@ -61,7 +61,7 @@ export default function Login({ onHomeClick, onSignUpClick, onLoginSuccess, user
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
+      <Navbar onHomeClick={onHomeClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <div style={styles.authBody}>
         <div style={styles.authContainer}>

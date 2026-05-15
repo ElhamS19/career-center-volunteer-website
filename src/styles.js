@@ -130,6 +130,13 @@ const styles = {
     borderRadius: radius.lg,
     margin: "24px 28px 0",
   },
+  helpHero: {
+    padding: "36px 32px",
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    margin: "24px 28px 0",
+    textAlign: "center",
+  },
   pill: {
     display: "inline-block",
     fontSize: "11px",
@@ -144,7 +151,7 @@ const styles = {
   heroTitle: {
     fontSize: "32px",
     fontWeight: 600,
-    margin: "14px 0 10px",
+    margin: "14px auto 10px",
     color: colors.textPrimary,
     lineHeight: 1.2,
     maxWidth: "640px",
@@ -154,12 +161,61 @@ const styles = {
     color: colors.textSecondary,
     maxWidth: "520px",
     lineHeight: 1.6,
-    margin: "0 0 24px",
+    margin: "0 auto 24px",
   },
   heroBtnRow: {
     display: "flex",
     gap: "10px",
     flexWrap: "wrap",
+  },
+  helpBody: {
+    padding: "24px 28px 40px",
+  },
+  faqList: {
+    display: "grid",
+    gap: "16px",
+  },
+  faqCard: {
+    backgroundColor: colors.surface,
+    border: `1px solid ${colors.border}`,
+    borderRadius: radius.lg,
+    padding: "22px 24px",
+  },
+  faqQuestion: {
+    fontSize: "16px",
+    fontWeight: 600,
+    margin: "0 0 10px",
+    color: colors.textPrimary,
+  },
+  faqAnswer: {
+    fontSize: "14px",
+    lineHeight: 1.7,
+    color: colors.textSecondary,
+    margin: 0,
+  },
+  contactCard: {
+    backgroundColor: colors.surface,
+    border: `1px solid ${colors.border}`,
+    borderRadius: radius.lg,
+    padding: "24px",
+    display: "grid",
+    gap: "14px",
+  },
+  contactRow: {
+    display: "grid",
+    gridTemplateColumns: "110px 1fr",
+    gap: "12px",
+    alignItems: "start",
+  },
+  contactLabel: {
+    fontSize: "12px",
+    fontWeight: 700,
+    color: colors.textSecondary,
+  },
+  contactValue: {
+    fontSize: "14px",
+    color: colors.textPrimary,
+    lineHeight: 1.7,
   },
 
   primaryBtn: {

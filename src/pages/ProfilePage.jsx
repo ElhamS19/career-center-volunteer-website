@@ -11,7 +11,7 @@ function getInitials(fullName) {
   return (first + last).toUpperCase() || "?";
 }
 
-export default function ProfilePage({ user, onSave, onLogoutClick, onHomeClick }) {
+export default function ProfilePage({ user, onSave, onLogoutClick, onHomeClick, onHelpClick }) {
   const firstName = user?.firstName || "";
   const lastName = user?.lastName || "";
   const defaultFullName = user?.fullName || `${firstName} ${lastName}`.trim();
@@ -87,7 +87,7 @@ export default function ProfilePage({ user, onSave, onLogoutClick, onHomeClick }
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} userAvatar={initials} />
+      <Navbar onHomeClick={onHomeClick} onHelpClick={onHelpClick} userAvatar={initials} />
 
       <div style={styles.profileBody}>
         <div style={styles.profileContainer}>

@@ -6,6 +6,7 @@ import SignUpPage from "./pages/SignUpPage";
 import ProfilePage from "./pages/ProfilePage";
 import SaveSuccessPage from "./pages/SaveSuccessPage";
 import LogoutSuccessPage from "./pages/LogoutSuccessPage";
+import Help from "./pages/Help";
 
 /* key frame for fade in animation */
 const styleTag = document.createElement("style");
@@ -65,6 +66,7 @@ export default function App() {
           onHomeClick={() => setCurrentPage("home")}
           onLoginClick={() => setCurrentPage("login")}
           onSignupClick={() => setCurrentPage("signup")}
+          onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -73,6 +75,7 @@ export default function App() {
         <Login
           onHomeClick={() => setCurrentPage("home")}
           onSignUpClick={() => setCurrentPage("signup")}
+          onHelpClick={() => setCurrentPage("help")}
           onLoginSuccess={handleLoginSuccess}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
@@ -82,6 +85,7 @@ export default function App() {
         <SignUpPage
           onHomeClick={() => setCurrentPage("home")}
           onLoginClick={() => setCurrentPage("login")}
+          onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -93,11 +97,13 @@ export default function App() {
           onSave={handleProfileSave}
           onLogoutClick={handleLogout}
           onHomeClick={() => setCurrentPage("home")}
+          onHelpClick={() => setCurrentPage("help")}
         />
       )}
       {currentPage === "saveSuccess" && (
         <SaveSuccessPage
           onHomeClick={() => setCurrentPage("home")}
+          onHelpClick={() => setCurrentPage("help")}
           userAvatar={userAvatar}
           onAvatarClick={handleAvatarClick}
         />
@@ -106,6 +112,18 @@ export default function App() {
         <LogoutSuccessPage
           onLoginClick={() => setCurrentPage("login")}
           onHomeClick={() => setCurrentPage("home")}
+          onHelpClick={() => setCurrentPage("help")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
+        />
+      )}
+      {currentPage === "help" && (
+        <Help
+          onHomeClick={() => setCurrentPage("home")}
+          onLoginClick={() => setCurrentPage("login")}
+          onHelpClick={() => setCurrentPage("help")}
+          userAvatar={userAvatar}
+          onAvatarClick={handleAvatarClick}
         />
       )}
     </div>

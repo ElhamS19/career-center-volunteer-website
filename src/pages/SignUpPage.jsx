@@ -22,7 +22,7 @@ function getStrength(pw) {
 }
 
 // Sign Up page
-export default function SignUpPage({ onHomeClick, onLoginClick, userAvatar, onAvatarClick }) {
+export default function SignUpPage({ onHomeClick, onLoginClick, onHelpClick, userAvatar, onAvatarClick }) {
   const [firstName,   setFirstName]   = useState("");
   const [lastName,    setLastName]    = useState("");
   const [email,       setEmail]       = useState("");
@@ -116,7 +116,7 @@ export default function SignUpPage({ onHomeClick, onLoginClick, userAvatar, onAv
 
   return (
     <div style={styles.page}>
-      <Navbar onHomeClick={onHomeClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
+      <Navbar onHomeClick={onHomeClick} onHelpClick={onHelpClick} userAvatar={userAvatar} onAvatarClick={onAvatarClick} />
 
       <div style={styles.authBody}>
         <div style={styles.authContainer}>
