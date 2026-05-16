@@ -2,15 +2,15 @@
 import mysql from "mysql2/promise";
 
 class Database {
-  static instance = null;
+  // Private static instance global instance
+  static #instance = null;
 
+  // Private constructor prevents direct instantiation
   constructor() {
-    if (Database.instance) {
-      return Database.instance;
+    if (Database.#instance) {
+      throw new Error("Use Database.getInstance() to get the database instance.");
     }
-
     this.connection = null;
-    Database.instance = this;
   }
 
   async connect() {
@@ -22,19 +22,17 @@ class Database {
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME,
       });
-
       console.log("✅ Connected to Railway MySQL!");
     }
-
     return this.connection;
   }
 
+  // Global access point  the only way to get the instance
   static getInstance() {
-    if (!Database.instance) {
-      Database.instance = new Database();
+    if (!Database.#instance) {
+      Database.#instance = new Database();
     }
-
-    return Database.instance;
+    return Database.#instance;
   }
 }
 
