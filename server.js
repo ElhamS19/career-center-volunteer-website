@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+import Database from "./Database.js";
 
 const app = express();
 app.use(cors());
@@ -32,124 +33,22 @@ function cleanupResetCode(email) {
   verifiedResetEmails.delete(email);
 }
 
-function readEnv(name) {
-  const value = process.env[name];
-
-  if (typeof value !== "string") {
-    return "";
-  }
-
-  return value.trim();
-}
-
-function parseBooleanEnv(name, defaultValue = false) {
-  const value = readEnv(name).toLowerCase();
-
-  if (!value) {
-    return defaultValue;
-  }
-
-  return value === "true" || value === "1" || value === "yes";
-}
-
-function isGmailHost(host) {
-  return /(^|\.)gmail\.com$/i.test(host) || /^smtp\.gmail\.com$/i.test(host);
-}
-
-function normalizeSmtpPassword(pass, host, service) {
-  const normalizedService = service.toLowerCase();
-
-  if (normalizedService === "gmail" || isGmailHost(host)) {
-    return pass.replace(/\s+/g, "");
-  }
-
-  return pass;
-}
-
-function classifyEmailError(error) {
-  const responseCode = Number(error?.responseCode || 0);
-  const code = String(error?.code || "").toUpperCase();
-  const command = String(error?.command || "").toUpperCase();
-
-  if (code === "EAUTH" || responseCode === 535 || command === "AUTH") {
-    return "SMTP authentication failed. Check Railway SMTP_USER and SMTP_PASS. For Gmail, SMTP_PASS must be a Google App Password.";
-  }
-
-  if (code === "ESOCKET" || code === "ECONNECTION" || code === "ETIMEDOUT") {
-    return "The app could not connect to the SMTP server. Check SMTP_HOST, SMTP_PORT, SMTP_SECURE, and whether your provider allows connections from Railway.";
-  }
-
-  if (responseCode === 553 || responseCode === 550 || code === "EENVELOPE") {
-    return "The SMTP server rejected the sender or recipient address. Make sure EMAIL_FROM is a valid address allowed by your mail provider.";
-  }
-
-  return "Unable to send the reset code email. Please try again later.";
-}
-
-function getEmailTransporter() {
-  const host = readEnv("SMTP_HOST");
-  const user = readEnv("SMTP_USER");
-  const service = readEnv("SMTP_SERVICE");
-  const pass = normalizeSmtpPassword(readEnv("SMTP_PASS"), host, service);
-  const port = Number(readEnv("SMTP_PORT") || "587");
-  const secure = parseBooleanEnv("SMTP_SECURE", port === 465);
-  const tlsServerName = readEnv("SMTP_TLS_SERVERNAME");
-  const smtpFamily = Number(readEnv("SMTP_FAMILY") || "0");
-  const missingConfig = ["SMTP_HOST", "SMTP_USER", "SMTP_PASS"].filter((key) => !readEnv(key));
-
-  if (missingConfig.length > 0) {
-    throw new Error(`Missing email configuration: ${missingConfig.join(", ")}`);
-  }
-
-  const transportConfig = {
-    host,
-    port,
-    secure,
-    auth: {
-      user,
-      pass,
-    },
-    ignoreTLS: parseBooleanEnv("SMTP_IGNORE_TLS", false),
-    requireTLS: parseBooleanEnv("SMTP_REQUIRE_TLS", !secure),
-    connectionTimeout: Number(readEnv("SMTP_CONNECTION_TIMEOUT") || "10000"),
-    greetingTimeout: Number(readEnv("SMTP_GREETING_TIMEOUT") || "10000"),
-    socketTimeout: Number(readEnv("SMTP_SOCKET_TIMEOUT") || "15000"),
-    tls: {
-      servername: tlsServerName || host,
-      rejectUnauthorized: parseBooleanEnv("SMTP_TLS_REJECT_UNAUTHORIZED", true),
-    },
-  };
-
-  if (smtpFamily === 4 || smtpFamily === 6) {
-    transportConfig.family = smtpFamily;
-  }
-
-  if (service) {
-    transportConfig.service = service;
-  } else if (isGmailHost(host)) {
-    transportConfig.service = "gmail";
-  }
-
-  return nodemailer.createTransport(transportConfig);
-}
-
 async function sendResetCodeEmail(email, code) {
-  const transporter = getEmailTransporter();
-  const subject = "Your Sac State Career Center Password Reset Code";
-  const text = `Your password reset code is ${code}. Enter this code in the app to proceed.`;
-  const html = `<p>Your password reset code is: <strong>${code}</strong>.</p><p>Enter this code to continue.</p>`;
-  const from = readEnv("EMAIL_FROM") || readEnv("SMTP_USER");
-
-  if (parseBooleanEnv("SMTP_VERIFY_BEFORE_SEND", false)) {
-    await transporter.verify();
-  }
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT || "587"),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
 
   await transporter.sendMail({
-    from,
+    from: process.env.EMAIL_FROM || process.env.SMTP_USER,
     to: email,
-    subject,
-    text,
-    html,
+    subject: "Your Sac State Career Center Password Reset Code",
+    html: `<p>Your password reset code is: <strong>${code}</strong>.</p><p>Enter this code to continue.</p>`,
   });
 }
 
@@ -165,7 +64,6 @@ function splitFullName(name) {
 function buildUserResponse(user) {
   const fullName = user.full_name || `${user.first_name || ""} ${user.last_name || ""}`.trim();
   const { firstName, lastName } = splitFullName(fullName);
-
   return {
     id: user.id,
     firstName: user.first_name || firstName,
@@ -173,25 +71,18 @@ function buildUserResponse(user) {
     username: user.username || "",
     email: user.email,
     phone: user.phone || "",
-    fullName: fullName || `${user.first_name || ""} ${user.last_name || ""}`.trim(),
+    fullName: fullName,
   };
 }
 
 let userColumnsCache;
 
 async function getUserColumns() {
-  if (userColumnsCache) {
-    return userColumnsCache;
-  }
-
+  if (userColumnsCache) return userColumnsCache;
   const [rows] = await db.execute(
-    `SELECT COLUMN_NAME
-     FROM INFORMATION_SCHEMA.COLUMNS
-     WHERE TABLE_SCHEMA = ?
-       AND TABLE_NAME = 'users'`,
+    `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'users'`,
     [process.env.DB_NAME]
   );
-
   userColumnsCache = new Set(rows.map((row) => row.COLUMN_NAME));
   return userColumnsCache;
 }
@@ -201,7 +92,6 @@ function buildInsertStatement(tableName, data) {
   const columns = entries.map(([column]) => column);
   const values = entries.map(([, value]) => value);
   const placeholders = entries.map(() => "?").join(", ");
-
   return {
     sql: `INSERT INTO ${tableName} (${columns.join(", ")}) VALUES (${placeholders})`,
     values,
@@ -212,14 +102,11 @@ function buildUpdateStatement(tableName, data, whereClause, whereValues = []) {
   const entries = Object.entries(data).filter(([, value]) => value !== undefined);
   const assignments = entries.map(([column]) => `${column} = ?`).join(", ");
   const values = entries.map(([, value]) => value);
-
   return {
     sql: `UPDATE ${tableName} SET ${assignments} ${whereClause}`,
     values: [...values, ...whereValues],
   };
 }
-
-import Database from "./Database.js";
 
 const dbInstance = Database.getInstance();
 const db = await dbInstance.connect();
@@ -236,10 +123,7 @@ app.post("/api/signup", async (req, res) => {
 
   try {
     const userColumns = await getUserColumns();
-    const [existing] = await db.execute(
-      "SELECT id FROM users WHERE email = ?",
-      [email]
-    );
+    const [existing] = await db.execute("SELECT id FROM users WHERE email = ?", [email]);
 
     if (existing.length > 0) {
       return res.status(409).json({ error: "An account with this email already exists." });
@@ -257,9 +141,7 @@ app.post("/api/signup", async (req, res) => {
       username: userColumns.has("username") ? username : undefined,
     };
     const { sql, values } = buildInsertStatement("users", insertData);
-
     await db.execute(sql, values);
-
     res.status(201).json({ message: "Account created successfully!" });
   } catch (err) {
     console.error("Signup error:", err);
@@ -276,10 +158,7 @@ app.post("/api/login", async (req, res) => {
   }
 
   try {
-    const [rows] = await db.execute(
-      "SELECT * FROM users WHERE email = ?",
-      [email]
-    );
+    const [rows] = await db.execute("SELECT * FROM users WHERE email = ?", [email]);
 
     if (rows.length === 0) {
       return res.status(401).json({ error: "No account found with that email." });
@@ -292,11 +171,7 @@ app.post("/api/login", async (req, res) => {
       return res.status(401).json({ error: "Incorrect password." });
     }
 
-    res.status(200).json({
-      message: "Login successful!",
-      user: buildUserResponse(user),
-    });
-
+    res.status(200).json({ message: "Login successful!", user: buildUserResponse(user) });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Server error. Please try again." });
@@ -317,10 +192,7 @@ app.post("/api/profile", async (req, res) => {
 
   try {
     const userColumns = await getUserColumns();
-    const [currentUser] = await db.execute(
-      "SELECT id FROM users WHERE id = ?",
-      [userId]
-    );
+    const [currentUser] = await db.execute("SELECT id FROM users WHERE id = ?", [userId]);
 
     if (currentUser.length === 0) {
       return res.status(404).json({ error: "User not found." });
@@ -331,7 +203,6 @@ app.post("/api/profile", async (req, res) => {
         "SELECT id FROM users WHERE username = ? AND id != ?",
         [normalizedUsername, userId]
       );
-
       if (usernameCheck.length > 0) {
         return res.status(409).json({ error: "Username already taken." });
       }
@@ -341,7 +212,6 @@ app.post("/api/profile", async (req, res) => {
       "SELECT id FROM users WHERE email = ? AND id != ?",
       [normalizedEmail, userId]
     );
-
     if (emailCheck.length > 0) {
       return res.status(409).json({ error: "Email already in use." });
     }
@@ -356,17 +226,13 @@ app.post("/api/profile", async (req, res) => {
       phone: userColumns.has("phone") ? (normalizedPhone || null) : undefined,
     };
     const { sql, values } = buildUpdateStatement("users", updateData, "WHERE id = ?", [userId]);
-
     await db.execute(sql, values);
 
     res.status(200).json({
       message: "Profile updated successfully!",
       user: {
-        id: userId,
-        firstName,
-        lastName,
-        username: normalizedUsername,
-        email: normalizedEmail,
+        id: userId, firstName, lastName,
+        username: normalizedUsername, email: normalizedEmail,
         phone: userColumns.has("phone") ? (normalizedPhone || "") : "",
         fullName: normalizedFullName,
       },
@@ -390,10 +256,7 @@ app.post("/api/password/change", async (req, res) => {
   }
 
   try {
-    const [rows] = await db.execute(
-      "SELECT id, password FROM users WHERE id = ?",
-      [userId]
-    );
+    const [rows] = await db.execute("SELECT id, password FROM users WHERE id = ?", [userId]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: "User not found." });
@@ -413,12 +276,7 @@ app.post("/api/password/change", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    await db.execute(
-      "UPDATE users SET password = ? WHERE id = ?",
-      [hashedPassword, userId]
-    );
-
+    await db.execute("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, userId]);
     res.status(200).json({ message: "Your password has been updated." });
   } catch (err) {
     console.error("Password change error:", err);
@@ -436,10 +294,7 @@ app.post("/api/password/request-reset", async (req, res) => {
   }
 
   try {
-    const [rows] = await db.execute(
-      "SELECT id FROM users WHERE email = ?",
-      [normalizedEmail]
-    );
+    const [rows] = await db.execute("SELECT id FROM users WHERE email = ?", [normalizedEmail]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: "No account found with that email." });
@@ -452,12 +307,7 @@ app.post("/api/password/request-reset", async (req, res) => {
       await sendResetCodeEmail(normalizedEmail, code);
     } catch (error) {
       console.error("Send reset code error:", error);
-      const missingConfig = error.message?.startsWith("Missing email configuration");
-      return res.status(500).json({
-        error: missingConfig
-          ? "Password reset email is not configured on the server."
-          : classifyEmailError(error),
-      });
+      return res.status(500).json({ error: "Unable to send the reset code email. Please try again later." });
     }
 
     res.status(200).json({ message: "A 6-digit reset code has been sent to your email." });
@@ -494,7 +344,6 @@ app.post("/api/password/verify-reset-code", async (req, res) => {
 
   passwordResetCodes.delete(normalizedEmail);
   verifiedResetEmails.add(normalizedEmail);
-
   res.status(200).json({ message: "The code has been verified. You can now reset your password." });
 });
 
@@ -516,10 +365,7 @@ app.post("/api/password/reset", async (req, res) => {
   }
 
   try {
-    const [rows] = await db.execute(
-      "SELECT id, password FROM users WHERE email = ?",
-      [normalizedEmail]
-    );
+    const [rows] = await db.execute("SELECT id, password FROM users WHERE email = ?", [normalizedEmail]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: "No account found with that email." });
@@ -533,15 +379,9 @@ app.post("/api/password/reset", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-    await db.execute(
-      "UPDATE users SET password = ? WHERE id = ?",
-      [hashedPassword, user.id]
-    );
-
+    await db.execute("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, user.id]);
     cleanupResetCode(normalizedEmail);
     verifiedResetEmails.delete(normalizedEmail);
-
     res.status(200).json({ message: "Your password has been reset." });
   } catch (err) {
     console.error("Password reset error:", err);

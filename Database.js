@@ -1,4 +1,4 @@
-/* global process */
+// database.jsgit 
 import mysql from "mysql2/promise";
 
 class Database {
